@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using NameInProgress.Interfaces;
 
 namespace NameInProgress
 {
-    public class ClassVisitor : SymbolVisitor
+    internal class ClassVisitor : SymbolVisitor, IClassVisitorBuilder, IVisitor
     {
         private bool onlyGenerics;
         private bool onlyPublics;
         private string name;
         private ICollection<string> classes;
 
-        public ClassVisitor(bool onlyGenerics, bool onlyPublics, string name)
+        public ClassVisitor()
         {
-            this.onlyGenerics = onlyGenerics;
-            this.onlyPublics = onlyPublics;
-            this.name = name;
             classes = new List<string>();
         }
 
@@ -29,6 +30,24 @@ namespace NameInProgress
             {
                 childSymbol.Accept(this);
             }
+        }
+
+        public IClassVisitorBuilder WithName(string name)
+        {
+            this.name = name;
+            return this;
+        }
+
+        public IClassVisitorBuilder OnlyGenerics()
+        {
+            onlyGenerics = true;
+            return this;
+        }
+
+        public IClassVisitorBuilder OnlyPublics()
+        {
+            onlyPublics = true;
+            return this;
         }
 
         public override void VisitNamedType(INamedTypeSymbol symbol)
@@ -51,6 +70,25 @@ namespace NameInProgress
             classes.Add(symbol.ToString());
         }
 
-        internal IEnumerable<object> GetResult() => classes;
+        public IVisitor Build() => this;
+
+        public IEnumerable<object> Execute(string location)
+        {
+            MetadataReference testAssembly = MetadataReference.CreateFromFile(location);
+            MetadataReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+            // For now, private member cannot be seen, but should be solved in 15.7, see https://github.com/dotnet/roslyn/pull/24468.
+            Compilation compilation = CSharpCompilation
+                .Create(nameof(NameInProgress))
+                .WithReferences(mscorlib, testAssembly);
+
+            Visit(compilation.GetAssemblyOrModuleSymbol(testAssembly));
+
+            return classes;
+        }
+
+        public IEnumerable<object> GetResult() => classes;
     }
 }

@@ -11,12 +11,12 @@ namespace NameInProgress.Runner
         private static void Main(string[] args)
         {
             Console.WriteLine("Program started...");
-            NameInProgressBuilder builder = new NameInProgressBuilder()
+            var builder = NameInProgressBuilder
                 .GetClasses()
                 .WithName("Filter")
                 .OnlyPublics()
                 .Build();
-            IEnumerable<object> classes = builder.Execute(typeof(Strinken.Parser.IToken).Assembly.Location);
+            var classes = builder.Execute(typeof(Strinken.Parser.IToken).Assembly.Location);
             foreach (var @class in classes)
             {
                 Console.WriteLine(@class.ToString());
