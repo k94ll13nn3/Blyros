@@ -1,22 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using NameInProgress.Builders;
 using NameInProgress.Interfaces;
 
 namespace NameInProgress
 {
-    internal class ClassVisitor : SymbolVisitor, IClassVisitorBuilder, IVisitor
+    internal class ClassVisitorBuilder : SymbolVisitor, IClassVisitorBuilder
     {
-        private bool onlyGenerics;
-        private bool onlyPublics;
-        private string name;
         private ICollection<string> classes;
 
-        public ClassVisitor()
+        public ClassVisitorBuilder()
         {
             classes = new List<string>();
+        }
+
+        public Func<string, bool> NameChecker { get; internal set; }
+
+        public IEqualOrLikeCondition<IClassVisitorBuilder> WithName()
+        {
+            return new NameConditionBuilder<IClassVisitorBuilder>(this);
         }
 
         public override void VisitAssembly(IAssemblySymbol symbol)
@@ -32,37 +38,9 @@ namespace NameInProgress
             }
         }
 
-        public IClassVisitorBuilder WithName(string name)
-        {
-            this.name = name;
-            return this;
-        }
-
-        public IClassVisitorBuilder OnlyGenerics()
-        {
-            onlyGenerics = true;
-            return this;
-        }
-
-        public IClassVisitorBuilder OnlyPublics()
-        {
-            onlyPublics = true;
-            return this;
-        }
-
         public override void VisitNamedType(INamedTypeSymbol symbol)
         {
-            if (onlyPublics && symbol.DeclaredAccessibility != Accessibility.Public)
-            {
-                return;
-            }
-
-            if (onlyGenerics && !symbol.IsGenericType)
-            {
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(name) && !symbol.Name.Contains(name))
+            if (NameChecker?.Invoke(symbol.Name) == false)
             {
                 return;
             }
@@ -88,7 +66,5 @@ namespace NameInProgress
 
             return classes;
         }
-
-        public IEnumerable<object> GetResult() => classes;
     }
 }

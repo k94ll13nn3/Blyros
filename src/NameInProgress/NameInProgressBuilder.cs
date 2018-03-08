@@ -4,6 +4,6 @@ namespace NameInProgress
 {
     public static class NameInProgressBuilder
     {
-        public static IClassVisitorBuilder GetClasses() => new ClassVisitor();
+        public static IClassVisitorBuilder GetClasses() => new ClassVisitorBuilder();
     }
 }

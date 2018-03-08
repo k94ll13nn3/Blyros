@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace NameInProgress.Runner
 {
@@ -13,8 +12,7 @@ namespace NameInProgress.Runner
             Console.WriteLine("Program started...");
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName("Filter")
-                .OnlyPublics()
+                .WithName().EqualTo("LowerFilter")
                 .Build();
             var classes = builder.Execute(typeof(Strinken.Parser.IToken).Assembly.Location);
             foreach (var @class in classes)
