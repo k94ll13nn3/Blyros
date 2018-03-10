@@ -1,23 +1,20 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
-using NameInProgress.Builders;
-using NameInProgress.Enums;
-using NameInProgress.Interfaces;
 using NameInProgress.Visitors;
 
-namespace NameInProgress
+namespace NameInProgress.Builders
 {
     internal class ClassVisitorBuilder : IClassVisitorBuilder
     {
         public Func<string, bool> NameChecker { get; internal set; }
         public Func<Accessibility, bool> AccessibilityChecker { get; internal set; }
 
-        public IEqualOrLikeCondition<IClassVisitorBuilder, string> WithName()
+        public INameConditionBuilder<IClassVisitorBuilder> WithName()
         {
             return new NameConditionBuilder<IClassVisitorBuilder>(this);
         }
 
-        public IEqualCondition<IClassVisitorBuilder, MemberAccessibility> WithAccessibility()
+        public IAccessibilityConditionBuilder<IClassVisitorBuilder> WithAccessibility()
         {
             return new AccessibilityConditionBuilder<IClassVisitorBuilder>(this);
         }

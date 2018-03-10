@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NameInProgress.Builders;
 using NameInProgress.Enums;
 
@@ -14,8 +15,8 @@ namespace NameInProgress.Runner
             Console.WriteLine("Program started...");
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("")
-                .WithAccessibility().EqualTo(MemberAccessibility.Public)
+                .WithName().Like("Visi")
+                .WithAccessibility().OneOf(new List<MemberAccessibility> { MemberAccessibility.Internal })
                 .Build();
             var classes = builder.Execute(typeof(NameInProgressBuilder).Assembly.Location);
             foreach (var @class in classes)

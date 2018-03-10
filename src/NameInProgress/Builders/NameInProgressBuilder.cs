@@ -1,6 +1,4 @@
-﻿using NameInProgress.Interfaces;
-
-namespace NameInProgress.Builders
+﻿namespace NameInProgress.Builders
 {
     public static class NameInProgressBuilder
     {

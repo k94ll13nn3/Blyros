@@ -1,4 +1,6 @@
-﻿namespace NameInProgress.Interfaces
+﻿using NameInProgress.Builders;
+
+namespace NameInProgress.Conditions
 {
     public interface IEqualCondition<T, U> where T : IBuilder
     {

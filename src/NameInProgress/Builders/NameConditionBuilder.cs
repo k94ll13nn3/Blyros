@@ -1,8 +1,8 @@
-﻿using NameInProgress.Interfaces;
+﻿using System;
 
 namespace NameInProgress.Builders
 {
-    internal class NameConditionBuilder<T> : IEqualOrLikeCondition<T, string> where T : IBuilder
+    internal class NameConditionBuilder<T> : INameConditionBuilder<T> where T : IBuilder
     {
         private T visitor;
 
@@ -13,11 +13,11 @@ namespace NameInProgress.Builders
 
         public T Like(string value)
         {
-            // Not really a fan of this...
+            Func<string, bool> nameChecker = s => s.Contains(value);
             switch (visitor)
             {
                 case ClassVisitorBuilder c:
-                    c.NameChecker = s => s.Contains(value);
+                    c.NameChecker = nameChecker;
                     break;
             }
 
@@ -26,11 +26,11 @@ namespace NameInProgress.Builders
 
         public T EqualTo(string value)
         {
-            // Not really a fan of this...
+            Func<string, bool> nameChecker = s => s == value;
             switch (visitor)
             {
                 case ClassVisitorBuilder c:
-                    c.NameChecker = s => s == value;
+                    c.NameChecker = nameChecker;
                     break;
             }
 
