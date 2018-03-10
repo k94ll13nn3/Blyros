@@ -7,6 +7,4 @@
         Private,
         Internal,
     }
-
-    public struct mberAcces { }
 }
