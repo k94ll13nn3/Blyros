@@ -1,4 +1,6 @@
 ﻿using System;
+using NameInProgress.Builders;
+using NameInProgress.Enums;
 
 namespace NameInProgress.Runner
 {
@@ -12,9 +14,10 @@ namespace NameInProgress.Runner
             Console.WriteLine("Program started...");
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().EqualTo("LowerFilter")
+                .WithName().Like("")
+                .WithAccessibility().EqualTo(MemberAccessibility.Public)
                 .Build();
-            var classes = builder.Execute(typeof(Strinken.Parser.IToken).Assembly.Location);
+            var classes = builder.Execute(typeof(NameInProgressBuilder).Assembly.Location);
             foreach (var @class in classes)
             {
                 Console.WriteLine(@class.ToString());

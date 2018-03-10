@@ -1,7 +1,7 @@
 ﻿namespace NameInProgress.Interfaces
 {
-    public interface INameCondition<T> where T : IVisitor
+    public interface INameCondition<T> where T : IBuilder
     {
-        IEqualOrLikeCondition<T> WithName();
+        IEqualOrLikeCondition<T, string> WithName();
     }
 }

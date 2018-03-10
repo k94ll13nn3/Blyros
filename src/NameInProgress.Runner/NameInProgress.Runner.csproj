@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NameInProgress\NameInProgress.csproj" />
-    <PackageReference Include="Strinken" Version="3.3.0" />
   </ItemGroup>
 
 </Project>

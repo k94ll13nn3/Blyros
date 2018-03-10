@@ -1,9 +1,7 @@
 ﻿namespace NameInProgress.Interfaces
 {
-    public interface IEqualOrLikeCondition<T> where T : IVisitor
+    public interface IEqualOrLikeCondition<T, U> : IEqualCondition<T, U> where T : IBuilder
     {
-        T Like(string value);
-
-        T EqualTo(string value);
+        T Like(U value);
     }
 }

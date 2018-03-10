@@ -2,7 +2,7 @@
 
 namespace NameInProgress.Builders
 {
-    internal class NameConditionBuilder<T> : IEqualOrLikeCondition<T> where T : IVisitor
+    internal class NameConditionBuilder<T> : IEqualOrLikeCondition<T, string> where T : IBuilder
     {
         private T visitor;
 
