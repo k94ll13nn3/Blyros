@@ -18,7 +18,7 @@ namespace NameInProgress.Runner
                 .WithName().Like("Visi")
                 .WithAccessibility().OneOf(new List<MemberAccessibility> { MemberAccessibility.Internal })
                 .Build();
-            var classes = builder.Execute(typeof(NameInProgressBuilder).Assembly.Location);
+            var classes = builder.Execute(typeof(NameInProgressBuilder));
             foreach (var @class in classes)
             {
                 Console.WriteLine(@class.ToString());

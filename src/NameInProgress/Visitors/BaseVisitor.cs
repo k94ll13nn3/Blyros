@@ -32,6 +32,8 @@ namespace NameInProgress.Visitors
             return GetResults();
         }
 
+        public IEnumerable<object> Execute(Type type) => Execute(type.Assembly.Location);
+
         public abstract IEnumerable<object> GetResults();
     }
 }
