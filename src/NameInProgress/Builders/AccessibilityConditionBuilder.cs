@@ -25,7 +25,6 @@ namespace NameInProgress.Builders
             else
             {
                 accessibilityChecker = a => a == mappedAccessibility;
-
             }
 
             switch (visitor)
@@ -37,6 +36,8 @@ namespace NameInProgress.Builders
 
             return visitor;
         }
+
+        public T OneOf(params MemberAccessibility[] values) => OneOf(values);
 
         public T OneOf(IEnumerable<MemberAccessibility> values)
         {

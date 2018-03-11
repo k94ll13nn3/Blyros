@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace NameInProgress.Builders
 {
@@ -11,17 +12,26 @@ namespace NameInProgress.Builders
             this.visitor = visitor;
         }
 
-        public T Like(string value)
+        public T Like(string value) => Like(value, false);
+
+        public T Like(string value, bool ignoreCase)
         {
-            Func<string, bool> nameChecker = s => s.Contains(value);
             switch (visitor)
             {
                 case ClassVisitorBuilder c:
-                    c.NameChecker = nameChecker;
+                    c.NameChecker = Contains;
                     break;
             }
 
             return visitor;
+
+            bool Contains(string s)
+            {
+                return CultureInfo.InvariantCulture.CompareInfo.IndexOf(
+                    s,
+                    value,
+                    ignoreCase ? CompareOptions.OrdinalIgnoreCase : CompareOptions.Ordinal) >= 0;
+            }
         }
 
         public T EqualTo(string value)

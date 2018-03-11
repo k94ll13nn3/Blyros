@@ -15,7 +15,7 @@ namespace NameInProgress.Runner
             Console.WriteLine("Program started...");
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("Visi")
+                .WithName().Like("visi", true)
                 .WithAccessibility().OneOf(new List<MemberAccessibility> { MemberAccessibility.Internal })
                 .Build();
             var classes = builder.Execute(typeof(NameInProgressBuilder));

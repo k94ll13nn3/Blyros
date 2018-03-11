@@ -2,8 +2,10 @@
 
 namespace NameInProgress.Conditions
 {
-    public interface ILikeCondition<T, U> where T : IBuilder
+    public interface ILikeCondition<T> where T : IBuilder
     {
-        T Like(U value);
+        T Like(string value);
+
+        T Like(string value, bool ignoreCase);
     }
 }
