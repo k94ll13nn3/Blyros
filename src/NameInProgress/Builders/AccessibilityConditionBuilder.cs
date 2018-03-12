@@ -5,7 +5,7 @@ using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
-    internal class AccessibilityConditionBuilder<T> : IAccessibilityConditionBuilder<T> where T : IBuilder
+    internal class AccessibilityConditionBuilder<T> : IAccessibilityConditionBuilder<T>
     {
         private T visitor;
 

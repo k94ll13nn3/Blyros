@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using NameInProgress.Builders;
 
 namespace NameInProgress.Conditions
 {
-    public interface IOneOfCondition<T, U> where T : IBuilder
+    public interface IOneOfCondition<T, U>
     {
         T OneOf(IEnumerable<U> values);
 

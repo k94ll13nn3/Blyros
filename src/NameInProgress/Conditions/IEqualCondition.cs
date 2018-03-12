@@ -1,8 +1,6 @@
-﻿using NameInProgress.Builders;
-
-namespace NameInProgress.Conditions
+﻿namespace NameInProgress.Conditions
 {
-    public interface IEqualCondition<T, U> where T : IBuilder
+    public interface IEqualCondition<T, U>
     {
         T EqualTo(U value);
     }

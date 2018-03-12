@@ -6,7 +6,6 @@ namespace NameInProgress.Builders
     public interface IAccessibilityConditionBuilder<T> :
         IEqualCondition<T, MemberAccessibility>,
         IOneOfCondition<T, MemberAccessibility>
-        where T : IBuilder
     {
     }
 }

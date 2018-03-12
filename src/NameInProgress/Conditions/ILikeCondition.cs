@@ -1,8 +1,6 @@
-﻿using NameInProgress.Builders;
-
-namespace NameInProgress.Conditions
+﻿namespace NameInProgress.Conditions
 {
-    public interface ILikeCondition<T> where T : IBuilder
+    public interface ILikeCondition<T>
     {
         T Like(string value);
 

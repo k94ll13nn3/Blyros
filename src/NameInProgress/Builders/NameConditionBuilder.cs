@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace NameInProgress.Builders
 {
-    internal class NameConditionBuilder<T> : INameConditionBuilder<T> where T : IBuilder
+    internal class NameConditionBuilder<T> : INameConditionBuilder<T>
     {
         private T visitor;
 

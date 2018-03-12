@@ -19,8 +19,8 @@ namespace NameInProgress.Runner
                 .WithGenericParameter().AnyType()
                 .WithGenericParameter().OfType<object>()
                 .WithGenericParameter().OfType().AllOf(typeof(object))
-                .WithGenericParameter().WithConstraint().EqualTo(true).AnyType()
-                .WithGenericParameter().WithConstraint().OneOf().AnyType()
+                .WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.Class).AnyType()
+                .WithGenericParameter().WithConstraint().OneOf(GenericConstraint.Class, GenericConstraint.Struct).AnyType()
                 .WithGenericParameter().WithConstraint().AllOf().OfType<object>()
                 .Build();
             var classes = builder.Execute(typeof(NameInProgressBuilder));
