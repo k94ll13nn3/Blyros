@@ -19,6 +19,11 @@ namespace NameInProgress.Builders
             return new AccessibilityConditionBuilder<IClassVisitorBuilder>(this);
         }
 
+        public IGenericParameterConditionBuilder<IClassVisitorBuilder> WithGenericParameter()
+        {
+            return null;
+        }
+
         public IVisitor Build() => new ClassVisitor(NameChecker, AccessibilityChecker);
     }
 }

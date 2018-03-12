@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using NameInProgress.Builders;
 using NameInProgress.Enums;
 
@@ -16,7 +15,13 @@ namespace NameInProgress.Runner
             var builder = NameInProgressBuilder
                 .GetClasses()
                 .WithName().Like("visi", true)
-                .WithAccessibility().OneOf(new List<MemberAccessibility> { MemberAccessibility.Internal })
+                .WithAccessibility().OneOf(MemberAccessibility.Internal, MemberAccessibility.Public)
+                .WithGenericParameter().AnyType()
+                .WithGenericParameter().OfType<object>()
+                .WithGenericParameter().OfType().AllOf(typeof(object))
+                .WithGenericParameter().WithConstraint().EqualTo(true).AnyType()
+                .WithGenericParameter().WithConstraint().OneOf().AnyType()
+                .WithGenericParameter().WithConstraint().AllOf().OfType<object>()
                 .Build();
             var classes = builder.Execute(typeof(NameInProgressBuilder));
             foreach (var @class in classes)

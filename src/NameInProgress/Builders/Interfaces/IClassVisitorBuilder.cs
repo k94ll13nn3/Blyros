@@ -6,7 +6,8 @@ namespace NameInProgress.Builders
     public interface IClassVisitorBuilder : 
         IBuilder, 
         INameCondition<IClassVisitorBuilder>, 
-        IAccessibilityCondition<IClassVisitorBuilder>
+        IAccessibilityCondition<IClassVisitorBuilder>,
+        IGenericParameterCondition<IClassVisitorBuilder>
     {
         IVisitor Build();
     }
