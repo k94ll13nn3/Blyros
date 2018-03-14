@@ -37,9 +37,7 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        public T OneOf(params MemberAccessibility[] values) => OneOf(values as IEnumerable<MemberAccessibility>);
-
-        public T OneOf(IEnumerable<MemberAccessibility> values)
+        public T OneOf(params MemberAccessibility[] values)
         {
             var mappedAccessibilities = new List<Accessibility?>();
             Func<Accessibility, bool> accessibilityChecker;

@@ -4,9 +4,6 @@
     {
         Class,
         Struct,
-        New,
-
-        // TODO: Better name
-        Derive
+        New
     }
 }

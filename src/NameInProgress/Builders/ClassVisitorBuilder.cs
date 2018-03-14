@@ -8,6 +8,7 @@ namespace NameInProgress.Builders
     {
         public Func<string, bool> NameChecker { get; internal set; }
         public Func<Accessibility, bool> AccessibilityChecker { get; internal set; }
+        public Func<ITypeParameterSymbol, bool> GenericParameterChecker { get; internal set; }
 
         public INameConditionBuilder<IClassVisitorBuilder> WithName()
         {
@@ -21,9 +22,9 @@ namespace NameInProgress.Builders
 
         public IGenericParameterConditionBuilder<IClassVisitorBuilder> WithGenericParameter()
         {
-            return null;
+            return new GenericParameterConditionBuilder<IClassVisitorBuilder>(this);
         }
 
-        public IVisitor Build() => new ClassVisitor(NameChecker, AccessibilityChecker);
+        public IVisitor Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker);
     }
 }
