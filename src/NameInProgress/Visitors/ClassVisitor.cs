@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
+using NameInProgress.Entities;
 
 namespace NameInProgress.Visitors
 {
-    internal class ClassVisitor : BaseVisitor
+    internal class ClassVisitor : BaseVisitor<ClassEntity>
     {
-        private ICollection<string> classes;
+        private ICollection<ClassEntity> classes;
         private Func<string, bool> nameChecker;
         private Func<Accessibility, bool> accessibilityChecker;
         private Func<ITypeParameterSymbol, bool> genericParameterChecker;
 
         public ClassVisitor(Func<string, bool> nameChecker, Func<Accessibility, bool> accessibilityChecker, Func<ITypeParameterSymbol, bool> genericParameterChecker)
         {
-            classes = new List<string>();
+            classes = new List<ClassEntity>();
             this.nameChecker = nameChecker;
             this.accessibilityChecker = accessibilityChecker;
             this.genericParameterChecker = genericParameterChecker;
@@ -62,9 +63,9 @@ namespace NameInProgress.Visitors
                 return;
             }
 
-            classes.Add(symbol.ToString());
+            classes.Add(new ClassEntity { Name = symbol.ToString() });
         }
 
-        public override IEnumerable<object> GetResults() => classes;
+        public override IEnumerable<ClassEntity> GetResults() => classes;
     }
 }

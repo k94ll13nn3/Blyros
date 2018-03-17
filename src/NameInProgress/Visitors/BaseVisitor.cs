@@ -6,9 +6,9 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace NameInProgress.Visitors
 {
-    internal abstract class BaseVisitor : SymbolVisitor, IVisitor
+    internal abstract class BaseVisitor<T> : SymbolVisitor, IVisitor<T>
     {
-        public IEnumerable<object> Execute(string location)
+        public IEnumerable<T> Execute(string location)
         {
             MetadataReference testAssembly = MetadataReference.CreateFromFile(location);
 
@@ -32,8 +32,8 @@ namespace NameInProgress.Visitors
             return GetResults();
         }
 
-        public IEnumerable<object> Execute(Type type) => Execute(type.Assembly.Location);
+        public IEnumerable<T> Execute(Type type) => Execute(type.Assembly.Location);
 
-        public abstract IEnumerable<object> GetResults();
+        public abstract IEnumerable<T> GetResults();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
+using NameInProgress.Entities;
 using NameInProgress.Visitors;
 
 namespace NameInProgress.Builders
@@ -25,6 +26,6 @@ namespace NameInProgress.Builders
             return new GenericParameterConditionBuilder<IClassVisitorBuilder>(this);
         }
 
-        public IVisitor Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker);
+        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker);
     }
 }

@@ -31,9 +31,9 @@ namespace NameInProgress.Runner
 
                 .Build();
             var classes = builder.Execute(typeof(Program));
-            foreach (var @class in classes)
+            foreach (var classEntity in classes)
             {
-                Console.WriteLine(@class.ToString());
+                Console.WriteLine(classEntity.Name);
             }
         }
     }

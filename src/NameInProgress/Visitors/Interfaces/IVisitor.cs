@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace NameInProgress.Visitors
 {
-    public interface IVisitor
+    public interface IVisitor<T>
     {
-        IEnumerable<object> Execute(string location);
+        IEnumerable<T> Execute(string location);
 
-        IEnumerable<object> Execute(Type type);
+        IEnumerable<T> Execute(Type type);
     }
 }

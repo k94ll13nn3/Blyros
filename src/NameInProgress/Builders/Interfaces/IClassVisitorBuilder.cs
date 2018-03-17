@@ -1,10 +1,11 @@
-﻿using NameInProgress.Visitors;
+﻿using NameInProgress.Entities;
+using NameInProgress.Visitors;
 
 namespace NameInProgress.Builders
 {
     public interface IClassVisitorBuilder
     {
-        IVisitor Build();
+        IVisitor<ClassEntity> Build();
 
         IGenericParameterConditionBuilder<IClassVisitorBuilder> WithGenericParameter();
 
