@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace NameInProgress.Tests
+namespace NameInProgress.Tests.Builders
 {
-    public class Test1
+    public class AccessibilityConditionBuilderTests
     {
         [Fact]
         public void Test()

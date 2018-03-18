@@ -5,7 +5,9 @@ using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
-    internal class AccessibilityConditionBuilder<T> : IAccessibilityConditionBuilder<T>
+    internal class AccessibilityConditionBuilder<T, TBuilder> : 
+        IAccessibilityConditionBuilder<TBuilder> 
+        where T : TBuilder, IAccessibilityCondition
     {
         private T visitor;
 
@@ -14,7 +16,7 @@ namespace NameInProgress.Builders
             this.visitor = visitor;
         }
 
-        public T EqualTo(MemberAccessibility value)
+        public TBuilder EqualTo(MemberAccessibility value)
         {
             Accessibility? mappedAccessibility = MapAccessibility(value);
             Func<Accessibility, bool> accessibilityChecker;
@@ -27,17 +29,12 @@ namespace NameInProgress.Builders
                 accessibilityChecker = a => a == mappedAccessibility;
             }
 
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.AccessibilityChecker = accessibilityChecker;
-                    break;
-            }
+            visitor.AccessibilityChecker = accessibilityChecker;
 
             return visitor;
         }
 
-        public T OneOf(params MemberAccessibility[] values)
+        public TBuilder OneOf(params MemberAccessibility[] values)
         {
             var mappedAccessibilities = new List<Accessibility?>();
             Func<Accessibility, bool> accessibilityChecker;
@@ -55,12 +52,7 @@ namespace NameInProgress.Builders
                 accessibilityChecker = a => mappedAccessibilities.Contains(a);
             }
 
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.AccessibilityChecker = accessibilityChecker;
-                    break;
-            }
+            visitor.AccessibilityChecker = accessibilityChecker;
 
             return visitor;
         }

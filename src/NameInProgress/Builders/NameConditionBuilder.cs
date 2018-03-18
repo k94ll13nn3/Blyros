@@ -1,9 +1,10 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace NameInProgress.Builders
 {
-    internal class NameConditionBuilder<T> : INameConditionBuilder<T>
+    internal class NameConditionBuilder<T, TBuilder> :
+        INameConditionBuilder<TBuilder>
+        where T : TBuilder, INameCondition
     {
         private T visitor;
 
@@ -12,17 +13,11 @@ namespace NameInProgress.Builders
             this.visitor = visitor;
         }
 
-        public T Like(string value) => Like(value, false);
+        public TBuilder Like(string value) => Like(value, false);
 
-        public T Like(string value, bool ignoreCase)
+        public TBuilder Like(string value, bool ignoreCase)
         {
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.NameChecker = Contains;
-                    break;
-            }
-
+            visitor.NameChecker = Contains;
             return visitor;
 
             bool Contains(string s)
@@ -34,16 +29,9 @@ namespace NameInProgress.Builders
             }
         }
 
-        public T EqualTo(string value)
+        public TBuilder EqualTo(string value)
         {
-            Func<string, bool> nameChecker = s => s == value;
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.NameChecker = nameChecker;
-                    break;
-            }
-
+            visitor.NameChecker = s => s == value;
             return visitor;
         }
     }

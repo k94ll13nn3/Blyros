@@ -8,10 +8,11 @@ using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
-    internal class GenericParameterConditionBuilder<T> :
-        IGenericParameterConditionBuilder<T>,
-        IAllOfOrOneOfCondition<T, Type>,
-        IEqualOrAllOfOrOneOfCondition<ITypeCondition<T>, GenericConstraint>
+    internal class GenericParameterConditionBuilder<T, TBuilder> :
+        IGenericParameterConditionBuilder<TBuilder>,
+        IAllOfOrOneOfCondition<TBuilder, Type>,
+        IEqualOrAllOfOrOneOfCondition<ITypeCondition<TBuilder>, GenericConstraint>
+        where T : TBuilder, IGenericParameterCondition
     {
         private T visitor;
 
@@ -26,7 +27,7 @@ namespace NameInProgress.Builders
             this.visitor = visitor;
         }
 
-        public T AnyType()
+        public TBuilder AnyType()
         {
             switch (visitor)
             {
@@ -38,9 +39,9 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        public T OfType<U>()
+        public TBuilder OfType<V>()
         {
-            var stringFromType = GetStringFromType(typeof(U));
+            var stringFromType = GetStringFromType(typeof(V));
             switch (visitor)
             {
                 case ClassVisitorBuilder c:
@@ -53,9 +54,9 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        public IAllOfOrOneOfCondition<T, Type> OfType() => this;
+        public IAllOfOrOneOfCondition<TBuilder, Type> OfType() => this;
 
-        public T AllOf(params Type[] values)
+        public TBuilder AllOf(params Type[] values)
         {
             IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
             switch (visitor)
@@ -73,7 +74,7 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        public T OneOf(params Type[] values)
+        public TBuilder OneOf(params Type[] values)
         {
             IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
             switch (visitor)
@@ -91,21 +92,21 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        public IEqualOrAllOfOrOneOfCondition<ITypeCondition<T>, GenericConstraint> WithConstraint() => this;
+        public IEqualOrAllOfOrOneOfCondition<ITypeCondition<TBuilder>, GenericConstraint> WithConstraint() => this;
 
-        public ITypeCondition<T> EqualTo(GenericConstraint value)
+        public ITypeCondition<TBuilder> EqualTo(GenericConstraint value)
         {
             constraintChecker = t => CheckConstraint(t, value);
             return this;
         }
 
-        public ITypeCondition<T> AllOf(params GenericConstraint[] values)
+        public ITypeCondition<TBuilder> AllOf(params GenericConstraint[] values)
         {
             constraintChecker = t => values.All(c => CheckConstraint(t, c));
             return this;
         }
 
-        public ITypeCondition<T> OneOf(params GenericConstraint[] values)
+        public ITypeCondition<TBuilder> OneOf(params GenericConstraint[] values)
         {
             constraintChecker = t => values.Any(c => CheckConstraint(t, c));
             return this;
