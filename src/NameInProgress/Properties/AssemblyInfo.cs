@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("NameInProgress.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: AssemblyCompany("k94ll13nn3")]
 [assembly: AssemblyCopyright("Copyright © k94ll13nn3")]
 [assembly: AssemblyProduct("NameInProgress")]

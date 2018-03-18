@@ -2,9 +2,11 @@
 {
     public enum MemberAccessibility
     {
-        All,
-        Public,
         Private,
+        PrivateProtected,
+        Protected,
         Internal,
+        ProtectedInternal,
+        Public
     }
 }

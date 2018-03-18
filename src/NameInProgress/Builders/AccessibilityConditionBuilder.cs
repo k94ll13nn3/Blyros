@@ -5,8 +5,8 @@ using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
-    internal class AccessibilityConditionBuilder<T, TBuilder> : 
-        IAccessibilityConditionBuilder<TBuilder> 
+    internal class AccessibilityConditionBuilder<T, TBuilder> :
+        IAccessibilityConditionBuilder<TBuilder>
         where T : TBuilder, IAccessibilityCondition
     {
         private T visitor;
@@ -69,6 +69,15 @@ namespace NameInProgress.Builders
 
                 case MemberAccessibility.Internal:
                     return Accessibility.Internal;
+
+                case MemberAccessibility.PrivateProtected:
+                    return Accessibility.ProtectedAndInternal;
+
+                case MemberAccessibility.Protected:
+                    return Accessibility.Protected;
+
+                case MemberAccessibility.ProtectedInternal:
+                    return Accessibility.ProtectedOrInternal;
 
                 default:
                     return null;
