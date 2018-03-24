@@ -7,6 +7,6 @@
         Protected,
         Internal,
         ProtectedInternal,
-        Public
+        Public,
     }
 }

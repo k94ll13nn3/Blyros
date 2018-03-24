@@ -18,18 +18,8 @@ namespace NameInProgress.Builders
 
         public TBuilder EqualTo(MemberAccessibility value)
         {
-            Accessibility? mappedAccessibility = MapAccessibility(value);
-            Func<Accessibility, bool> accessibilityChecker;
-            if (mappedAccessibility == null)
-            {
-                accessibilityChecker = _ => true;
-            }
-            else
-            {
-                accessibilityChecker = a => a == mappedAccessibility;
-            }
-
-            visitor.AccessibilityChecker = accessibilityChecker;
+            Accessibility mappedAccessibility = MapAccessibility(value);
+            visitor.AccessibilityChecker = a => a == mappedAccessibility;
 
             return visitor;
         }
@@ -45,7 +35,7 @@ namespace NameInProgress.Builders
 
             if (mappedAccessibilities.Count == 0)
             {
-                accessibilityChecker = _ => true;
+                accessibilityChecker = _ => false;
             }
             else
             {
@@ -57,13 +47,11 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
-        private static Accessibility? MapAccessibility(MemberAccessibility value)
+        private static Accessibility MapAccessibility(MemberAccessibility value)
         {
             switch (value)
             {
-                case MemberAccessibility.Public:
-                    return Accessibility.Public;
-
+                
                 case MemberAccessibility.Private:
                     return Accessibility.Private;
 
@@ -79,9 +67,11 @@ namespace NameInProgress.Builders
                 case MemberAccessibility.ProtectedInternal:
                     return Accessibility.ProtectedOrInternal;
 
-                default:
-                    return null;
+                case MemberAccessibility.Public:
+                    return Accessibility.Public;
             }
+
+            throw new ArgumentException($"'{nameof(value)}' has not a valid value.", nameof(value));
         }
     }
 }

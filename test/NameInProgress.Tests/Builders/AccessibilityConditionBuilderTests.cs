@@ -1,4 +1,6 @@
-﻿using FakeItEasy;
+﻿using System;
+using System.Linq;
+using FakeItEasy;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Builders;
@@ -10,14 +12,20 @@ namespace NameInProgress.Tests.Builders
 {
     public class AccessibilityConditionBuilderTests
     {
-        [Fact]
-        public void AccessibilityChecker_EqualTo_ReturnsTrue()
+        [Theory]
+        [InlineData(MemberAccessibility.Internal, Accessibility.Internal)]
+        [InlineData(MemberAccessibility.Private, Accessibility.Private)]
+        [InlineData(MemberAccessibility.PrivateProtected, Accessibility.ProtectedAndInternal)]
+        [InlineData(MemberAccessibility.Protected, Accessibility.Protected)]
+        [InlineData(MemberAccessibility.ProtectedInternal, Accessibility.ProtectedOrInternal)]
+        [InlineData(MemberAccessibility.Public, Accessibility.Public)]
+        public void AccessibilityChecker_EqualTo_ReturnsTrue(MemberAccessibility memberAccessibility, Accessibility accessibility)
         {
             IAccessibilityCondition builder =
                 new Builder(A.Fake<IAccessibilityCondition>())
-                .EqualTo(MemberAccessibility.Internal);
+                .EqualTo(memberAccessibility);
 
-            builder.AccessibilityChecker(Accessibility.Internal).Should().BeTrue();
+            builder.AccessibilityChecker(accessibility).Should().BeTrue();
         }
 
         [Fact]
@@ -50,6 +58,46 @@ namespace NameInProgress.Tests.Builders
 
             builder.AccessibilityChecker(Accessibility.Internal).Should().BeTrue();
             builder.AccessibilityChecker(Accessibility.Public).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(Accessibility.Internal)]
+        [InlineData(Accessibility.Private)]
+        [InlineData(Accessibility.ProtectedAndInternal)]
+        [InlineData(Accessibility.Protected)]
+        [InlineData(Accessibility.ProtectedOrInternal)]
+        [InlineData(Accessibility.Public)]
+        public void AccessibilityChecker_OneOfWithoutParameters_ReturnsFalse(Accessibility accessibility)
+        {
+            IAccessibilityCondition builder =
+                new Builder(A.Fake<IAccessibilityCondition>())
+                .OneOf();
+
+            builder.AccessibilityChecker(accessibility).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(Accessibility.Internal)]
+        [InlineData(Accessibility.Private)]
+        [InlineData(Accessibility.ProtectedAndInternal)]
+        [InlineData(Accessibility.Protected)]
+        [InlineData(Accessibility.ProtectedOrInternal)]
+        [InlineData(Accessibility.Public)]
+        public void AccessibilityChecker_OneOfWithAllParameters_ReturnsTrue(Accessibility accessibility)
+        {
+            IAccessibilityCondition builder =
+                new Builder(A.Fake<IAccessibilityCondition>())
+                .OneOf(Enum.GetValues(typeof(MemberAccessibility)).Cast<MemberAccessibility>().ToArray());
+
+            builder.AccessibilityChecker(accessibility).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AccessibilityChecker_OneOfWithInvalidParameter_ThrowsArgumentException()
+        {
+            Action act = () => new Builder(A.Fake<IAccessibilityCondition>()).OneOf((MemberAccessibility)(-1));
+
+            act.Should().Throw<ArgumentException>();
         }
 
         [Fact]
