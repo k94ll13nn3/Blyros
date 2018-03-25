@@ -12,14 +12,25 @@ namespace NameInProgress.Visitors
         {
             MetadataReference testAssembly = MetadataReference.CreateFromFile(location);
 
-            // not needed if using full framework
-            // see if all assemblies are needed
-            // https://github.com/dotnet/roslyn/wiki/Runtime-code-generation-using-Roslyn-compilations-in-.NET-Core-App
-            IList<MetadataReference> platformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")
-                .ToString()
-                .Split(';')
-                .Select(x => (MetadataReference)MetadataReference.CreateFromFile(x))
-                .ToList();
+            IList<MetadataReference> platformAssemblies;
+            var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
+            if (trustedPlatformAssemblies != null)
+            {
+                // .NET Core App need this for resolving types.
+                // see if all assemblies are needed
+                // https://github.com/dotnet/roslyn/wiki/Runtime-code-generation-using-Roslyn-compilations-in-.NET-Core-App
+                platformAssemblies = trustedPlatformAssemblies
+                    .ToString()
+                    .Split(';')
+                    .Select(x => (MetadataReference)MetadataReference.CreateFromFile(x))
+                    .ToList();
+            }
+            else
+            {
+                MetadataReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+                platformAssemblies = new List<MetadataReference> { mscorlib };
+            }
+
             platformAssemblies.Add(testAssembly);
 
             // For now, private member cannot be seen, but should be solved in 15.7, see https://github.com/dotnet/roslyn/pull/24468.
