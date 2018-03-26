@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Enums;
 
@@ -28,7 +29,7 @@ namespace NameInProgress.Builders
         {
             var mappedAccessibilities = new List<Accessibility?>();
             Func<Accessibility, bool> accessibilityChecker;
-            foreach (MemberAccessibility value in values)
+            foreach (MemberAccessibility value in values ?? Enumerable.Empty<MemberAccessibility>())
             {
                 mappedAccessibilities.Add(MapAccessibility(value));
             }
@@ -51,7 +52,6 @@ namespace NameInProgress.Builders
         {
             switch (value)
             {
-                
                 case MemberAccessibility.Private:
                     return Accessibility.Private;
 

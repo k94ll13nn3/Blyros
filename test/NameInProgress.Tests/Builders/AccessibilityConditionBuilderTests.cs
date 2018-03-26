@@ -60,6 +60,16 @@ namespace NameInProgress.Tests.Builders
             builder.AccessibilityChecker(Accessibility.Public).Should().BeTrue();
         }
 
+        [Fact]
+        public void AccessibilityChecker_OneOfWithoutParameters_AccessibilityCheckerShouldNotBeNull()
+        {
+            IAccessibilityCondition builder =
+                new Builder(A.Fake<IAccessibilityCondition>())
+                .OneOf();
+
+            builder.AccessibilityChecker.Should().NotBeNull();
+        }
+
         [Theory]
         [InlineData(Accessibility.Internal)]
         [InlineData(Accessibility.Private)]
@@ -72,6 +82,32 @@ namespace NameInProgress.Tests.Builders
             IAccessibilityCondition builder =
                 new Builder(A.Fake<IAccessibilityCondition>())
                 .OneOf();
+
+            builder.AccessibilityChecker(accessibility).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AccessibilityChecker_OneOfWithNullParameters_AccessibilityCheckerShouldNotBeNull()
+        {
+            IAccessibilityCondition builder =
+                new Builder(A.Fake<IAccessibilityCondition>())
+                .OneOf(null);
+
+            builder.AccessibilityChecker.Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(Accessibility.Internal)]
+        [InlineData(Accessibility.Private)]
+        [InlineData(Accessibility.ProtectedAndInternal)]
+        [InlineData(Accessibility.Protected)]
+        [InlineData(Accessibility.ProtectedOrInternal)]
+        [InlineData(Accessibility.Public)]
+        public void AccessibilityChecker_OneOfWithNullParameters_ReturnsFalse(Accessibility accessibility)
+        {
+            IAccessibilityCondition builder =
+                new Builder(A.Fake<IAccessibilityCondition>())
+                .OneOf(null);
 
             builder.AccessibilityChecker(accessibility).Should().BeFalse();
         }
