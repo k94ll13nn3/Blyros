@@ -9,10 +9,10 @@ using NameInProgress.Enums;
 namespace NameInProgress.Builders
 {
     internal class GenericParameterConditionBuilder<T, TBuilder> :
-        IGenericParameterConditionBuilder<TBuilder>,
+        IGenericParameterCondition<TBuilder>,
         IAllOfOrOneOfCondition<TBuilder, Type>,
         IEqualOrAllOfOrOneOfCondition<ITypeCondition<TBuilder>, GenericConstraint>
-        where T : TBuilder, IGenericParameterCondition
+        where T : TBuilder, IGenericParameterChecker
     {
         private T visitor;
 

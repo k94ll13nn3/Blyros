@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using NameInProgress.Conditions;
 using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
     internal class AccessibilityConditionBuilder<T, TBuilder> :
-        IAccessibilityConditionBuilder<TBuilder>
-        where T : TBuilder, IAccessibilityCondition
+        IAccessibilityCondition<TBuilder>
+        where T : TBuilder, IAccessibilityChecker
     {
         private T visitor;
 

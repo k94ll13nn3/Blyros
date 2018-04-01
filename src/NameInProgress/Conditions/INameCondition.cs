@@ -1,8 +1,8 @@
 ﻿using NameInProgress.Conditions;
 
-namespace NameInProgress.Builders
+namespace NameInProgress.Conditions
 {
-    public interface INameConditionBuilder<T> :
+    public interface INameCondition<T> :
         IEqualOrLikeCondition<T>,
         IOneOfCondition<T, string>
     {

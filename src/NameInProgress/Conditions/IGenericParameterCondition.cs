@@ -1,9 +1,9 @@
 ﻿using NameInProgress.Conditions;
 using NameInProgress.Enums;
 
-namespace NameInProgress.Builders
+namespace NameInProgress.Conditions
 {
-    public interface IGenericParameterConditionBuilder<T> :
+    public interface IGenericParameterCondition<T> :
         ITypeCondition<T>
     {
         IEqualOrAllOfOrOneOfCondition<ITypeCondition<T>, GenericConstraint> WithConstraint();

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using NameInProgress.Builders;
 using NameInProgress.Enums;
 using Xunit;
-using Builder = NameInProgress.Builders.AccessibilityConditionBuilder<NameInProgress.Builders.IAccessibilityCondition, NameInProgress.Builders.IAccessibilityCondition>;
+using Builder = NameInProgress.Builders.AccessibilityConditionBuilder<NameInProgress.Builders.IAccessibilityChecker, NameInProgress.Builders.IAccessibilityChecker>;
 
 namespace NameInProgress.Tests.Builders
 {
@@ -21,8 +21,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(MemberAccessibility.Public, Accessibility.Public)]
         public void AccessibilityChecker_EqualTo_ReturnsTrue(MemberAccessibility memberAccessibility, Accessibility accessibility)
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .EqualTo(memberAccessibility);
 
             builder.AccessibilityChecker(accessibility).Should().BeTrue();
@@ -31,8 +31,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_EqualTo_ReturnsFalse()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .EqualTo(MemberAccessibility.Internal);
 
             builder.AccessibilityChecker(Accessibility.Protected).Should().BeFalse();
@@ -41,8 +41,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_OneOf_ReturnsFalse()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf(MemberAccessibility.Internal, MemberAccessibility.Public);
 
             builder.AccessibilityChecker(Accessibility.Protected).Should().BeFalse();
@@ -52,8 +52,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_OneOf_ReturnsTrue()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf(MemberAccessibility.Internal, MemberAccessibility.Public);
 
             builder.AccessibilityChecker(Accessibility.Internal).Should().BeTrue();
@@ -63,8 +63,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_OneOfWithoutParameters_AccessibilityCheckerShouldNotBeNull()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf();
 
             builder.AccessibilityChecker.Should().NotBeNull();
@@ -79,8 +79,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(Accessibility.Public)]
         public void AccessibilityChecker_OneOfWithoutParameters_ReturnsFalse(Accessibility accessibility)
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf();
 
             builder.AccessibilityChecker(accessibility).Should().BeFalse();
@@ -89,8 +89,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_OneOfWithNullParameters_AccessibilityCheckerShouldNotBeNull()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf(null);
 
             builder.AccessibilityChecker.Should().NotBeNull();
@@ -105,8 +105,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(Accessibility.Public)]
         public void AccessibilityChecker_OneOfWithNullParameters_ReturnsFalse(Accessibility accessibility)
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf(null);
 
             builder.AccessibilityChecker(accessibility).Should().BeFalse();
@@ -121,8 +121,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(Accessibility.Public)]
         public void AccessibilityChecker_OneOfWithAllParameters_ReturnsTrue(Accessibility accessibility)
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .OneOf(Enum.GetValues(typeof(MemberAccessibility)).Cast<MemberAccessibility>().ToArray());
 
             builder.AccessibilityChecker(accessibility).Should().BeTrue();
@@ -131,7 +131,7 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_OneOfWithInvalidParameter_ThrowsArgumentException()
         {
-            Action act = () => new Builder(A.Fake<IAccessibilityCondition>()).OneOf((MemberAccessibility)(-1));
+            Action act = () => new Builder(A.Fake<IAccessibilityChecker>()).OneOf((MemberAccessibility)(-1));
 
             act.Should().Throw<ArgumentException>();
         }
@@ -139,8 +139,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_EqualToWithComposedAccessibility_ReturnsFalse()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .EqualTo(MemberAccessibility.ProtectedInternal);
 
             builder.AccessibilityChecker(Accessibility.Internal).Should().BeFalse();
@@ -150,8 +150,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void AccessibilityChecker_EqualToWithComposedAccessibility_ReturnsTrue()
         {
-            IAccessibilityCondition builder =
-                new Builder(A.Fake<IAccessibilityCondition>())
+            IAccessibilityChecker builder =
+                new Builder(A.Fake<IAccessibilityChecker>())
                 .EqualTo(MemberAccessibility.PrivateProtected);
 
             builder.AccessibilityChecker(Accessibility.ProtectedAndInternal).Should().BeTrue();

@@ -1,11 +1,12 @@
 ﻿using System.Globalization;
 using System.Linq;
+using NameInProgress.Conditions;
 
 namespace NameInProgress.Builders
 {
     internal class NameConditionBuilder<T, TBuilder> :
-        INameConditionBuilder<TBuilder>
-        where T : TBuilder, INameCondition
+        INameCondition<TBuilder>
+        where T : TBuilder, INameChecker
     {
         private T visitor;
 

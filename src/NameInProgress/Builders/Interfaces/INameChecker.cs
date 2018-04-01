@@ -2,7 +2,7 @@
 
 namespace NameInProgress.Builders
 {
-    internal interface INameCondition
+    internal interface INameChecker
     {
         Func<string, bool> NameChecker { get; set; }
     }

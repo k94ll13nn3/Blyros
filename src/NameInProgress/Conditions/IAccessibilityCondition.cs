@@ -1,9 +1,9 @@
 ﻿using NameInProgress.Conditions;
 using NameInProgress.Enums;
 
-namespace NameInProgress.Builders
+namespace NameInProgress.Conditions
 {
-    public interface IAccessibilityConditionBuilder<T> :
+    public interface IAccessibilityCondition<T> :
         IEqualCondition<T, MemberAccessibility>,
         IOneOfCondition<T, MemberAccessibility>
     {

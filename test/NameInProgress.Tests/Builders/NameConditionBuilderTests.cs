@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NameInProgress.Builders;
 using Xunit;
-using Builder = NameInProgress.Builders.NameConditionBuilder<NameInProgress.Builders.INameCondition, NameInProgress.Builders.INameCondition>;
+using Builder = NameInProgress.Builders.NameConditionBuilder<NameInProgress.Builders.INameChecker, NameInProgress.Builders.INameChecker>;
 
 namespace NameInProgress.Tests.Builders
 {
@@ -13,8 +13,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(NameConditionBuilderTests))]
         public void NameChecker_EqualTo_ReturnsTrue(string name)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .EqualTo(name);
 
             builder.NameChecker(name).Should().BeTrue();
@@ -23,11 +23,11 @@ namespace NameInProgress.Tests.Builders
         [Theory]
         [InlineData(null, null)]
         [InlineData("", "Lorem")]
-        [InlineData(nameof(NameConditionBuilderTests), nameof(INameCondition))]
+        [InlineData(nameof(NameConditionBuilderTests), nameof(INameChecker))]
         public void NameChecker_EqualTo_ReturnsFalse(string name, string equalTo)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .EqualTo(equalTo);
 
             builder.NameChecker(name).Should().BeFalse();
@@ -39,8 +39,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData("Lorem", "")]
         public void NameChecker_Like_ReturnsTrue(string name, string pattern)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .Like(pattern);
 
             builder.NameChecker(name).Should().BeTrue();
@@ -53,8 +53,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(null, "")]
         public void NameChecker_Like_ReturnsFalse(string name, string pattern)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .Like(pattern);
 
             builder.NameChecker(name).Should().BeFalse();
@@ -66,8 +66,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData("lorem", "LOREM")]
         public void NameChecker_LikeIgnoringCase_ReturnsTrue(string name, string pattern)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .Like(pattern, true);
 
             builder.NameChecker(name).Should().BeTrue();
@@ -76,8 +76,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void NameChecker_OneOfWithoutParameters_NameCheckerShouldNotBeNull()
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf();
 
             builder.NameChecker.Should().NotBeNull();
@@ -89,8 +89,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(NameConditionBuilderTests))]
         public void NameChecker_OneOfWithoutParameters_ReturnsFalse(string name)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf();
 
             builder.NameChecker(name).Should().BeFalse();
@@ -99,8 +99,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void NameChecker_OneOfWithNullParameters_NameCheckerShouldNotBeNull()
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf(null);
 
             builder.NameChecker.Should().NotBeNull();
@@ -112,8 +112,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(NameConditionBuilderTests))]
         public void NameChecker_OneOfWithNullParameters_ReturnsFalse(string name)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf(null);
 
             builder.NameChecker(name).Should().BeFalse();
@@ -125,8 +125,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(NameConditionBuilderTests))]
         public void NameChecker_OneOf_ReturnsTrue(string name)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf(new[] { "", "Lorem", nameof(NameConditionBuilderTests) });
 
             builder.NameChecker(name).Should().BeTrue();
@@ -134,12 +134,12 @@ namespace NameInProgress.Tests.Builders
 
         [Theory]
         [InlineData(null)]
-        [InlineData(nameof(INameCondition))]
+        [InlineData(nameof(INameChecker))]
         [InlineData("LoremLorem")]
         public void NameChecker_OneOf_ReturnsFalse(string name)
         {
-            INameCondition builder =
-                new Builder(A.Fake<INameCondition>())
+            INameChecker builder =
+                new Builder(A.Fake<INameChecker>())
                 .OneOf(new[] { "", "Lorem", nameof(NameConditionBuilderTests) });
 
             builder.NameChecker(name).Should().BeFalse();

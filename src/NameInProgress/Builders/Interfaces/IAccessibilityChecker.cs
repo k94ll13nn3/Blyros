@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace NameInProgress.Builders
 {
-    internal interface IAccessibilityCondition
+    internal interface IAccessibilityChecker
     {
         Func<Accessibility, bool> AccessibilityChecker { get; set; }
     }

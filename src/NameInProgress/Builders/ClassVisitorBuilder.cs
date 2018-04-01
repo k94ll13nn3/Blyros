@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
+using NameInProgress.Conditions;
 using NameInProgress.Entities;
 using NameInProgress.Visitors;
 
@@ -7,25 +8,25 @@ namespace NameInProgress.Builders
 {
     internal class ClassVisitorBuilder :
         IClassVisitorBuilder,
-        IAccessibilityCondition,
-        IGenericParameterCondition,
-        INameCondition
+        IAccessibilityChecker,
+        IGenericParameterChecker,
+        INameChecker
     {
         public Func<Accessibility, bool> AccessibilityChecker { get; set; }
         public Func<ITypeParameterSymbol, bool> GenericParameterChecker { get; set; }
         public Func<string, bool> NameChecker { get; set; }
 
-        public INameConditionBuilder<IClassVisitorBuilder> WithName()
+        public INameCondition<IClassVisitorBuilder> WithName()
         {
             return new NameConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
         }
 
-        public IAccessibilityConditionBuilder<IClassVisitorBuilder> WithAccessibility()
+        public IAccessibilityCondition<IClassVisitorBuilder> WithAccessibility()
         {
             return new AccessibilityConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
         }
 
-        public IGenericParameterConditionBuilder<IClassVisitorBuilder> WithGenericParameter()
+        public IGenericParameterCondition<IClassVisitorBuilder> WithGenericParameter()
         {
             return new GenericParameterConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
         }

@@ -1,4 +1,5 @@
-﻿using NameInProgress.Entities;
+﻿using NameInProgress.Conditions;
+using NameInProgress.Entities;
 using NameInProgress.Visitors;
 
 namespace NameInProgress.Builders
@@ -7,10 +8,10 @@ namespace NameInProgress.Builders
     {
         IVisitor<ClassEntity> Build();
 
-        IGenericParameterConditionBuilder<IClassVisitorBuilder> WithGenericParameter();
+        IGenericParameterCondition<IClassVisitorBuilder> WithGenericParameter();
 
-        IAccessibilityConditionBuilder<IClassVisitorBuilder> WithAccessibility();
+        IAccessibilityCondition<IClassVisitorBuilder> WithAccessibility();
 
-        INameConditionBuilder<IClassVisitorBuilder> WithName();
+        INameCondition<IClassVisitorBuilder> WithName();
     }
 }
