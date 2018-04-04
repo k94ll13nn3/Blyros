@@ -90,14 +90,8 @@ namespace NameInProgress.Builders
 
         private static string GetStringFromType(Type type)
         {
-            var name = type.Name.Split('`')[0];
             var builder = new StringBuilder();
-            if (!string.IsNullOrWhiteSpace(type.Namespace))
-            {
-                builder.Append($"{type.Namespace}.");
-            }
-
-            builder.Append(name);
+            builder.Append(type.FullName.Split('`')[0]);
             if (type.GenericTypeArguments.Any())
             {
                 builder.Append($"<{string.Join(", ", type.GenericTypeArguments.Select(z => GetStringFromType(z)))}>");

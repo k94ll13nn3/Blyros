@@ -28,31 +28,82 @@ namespace NameInProgress.Tests.Builders
                 new Builder(A.Fake<IGenericParameterChecker>())
                 .OfType<IGenericParameterChecker>();
 
-            var typeSymbol = A.Fake<ITypeSymbol>();
-            A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns("NameInProgress.Builders.IGenericParameterChecker");
-            var typeSymbols = new List<ITypeSymbol> { typeSymbol };
-
+            var typeSymbols = GetTypeSymbols("NameInProgress.Builders.IGenericParameterChecker");
             var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
-            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols.ToImmutableArray());
+            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("NameInProgress.IGenericParameterChecker")]
+        [InlineData("Microsoft.CodeAnalysis.ITypeSymbol")]
+        public void GenericParameterChecker_OfType_ReturnsFalse(string type)
+        {
+            IGenericParameterChecker builder =
+                new Builder(A.Fake<IGenericParameterChecker>())
+                .OfType<IGenericParameterChecker>();
+
+            var typeSymbols = GetTypeSymbols(type);
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_OfTypeMultipleTypeToFind_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                new Builder(A.Fake<IGenericParameterChecker>())
+                .OfType<IGenericParameterChecker>();
+
+            var typeSymbols = GetTypeSymbols("NameInProgress.Builders.IGenericParameterChecker", "NameInProgress.Builders.INamerChecker");
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
 
         [Fact]
-        public void GenericParameterChecker_OfType_ReturnsFalse()
+        public void GenericParameterChecker_OfTypeWithGeneric_ReturnsTrue()
         {
             IGenericParameterChecker builder =
                 new Builder(A.Fake<IGenericParameterChecker>())
-                .OfType<IEnumerable<IGenericParameterChecker>>();
+                .OfType<IEnumerable<string>>();
 
-            var typeSymbol = A.Fake<ITypeSymbol>();
-            A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns("NameInProgress.Builders.IGenericParameterChecker");
-            var typeSymbols = new List<ITypeSymbol> { typeSymbol };
-
+            var typeSymbols = GetTypeSymbols("System.Collections.Generic.IEnumerable<System.String>");
             var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
-            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols.ToImmutableArray());
+            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_OfTypeWithGeneric_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                new Builder(A.Fake<IGenericParameterChecker>())
+                .OfType<IEnumerable<string>>();
+
+            var typeSymbols = GetTypeSymbols("System.Collections.Generic.IEnumerable<NameInProgress.Builders.IGenericParameterChecker>");
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        private ImmutableArray<ITypeSymbol> GetTypeSymbols(params string[] types)
+        {
+            var typeSymbols = new List<ITypeSymbol>();
+            foreach (var type in types)
+            {
+                var typeSymbol = A.Fake<ITypeSymbol>();
+                A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(type);
+                typeSymbols.Add(typeSymbol);
+            }
+
+            return typeSymbols.ToImmutableArray();
         }
     }
 }
