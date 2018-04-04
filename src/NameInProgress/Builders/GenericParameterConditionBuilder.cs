@@ -29,27 +29,15 @@ namespace NameInProgress.Builders
 
         public TBuilder AnyType()
         {
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.GenericParameterChecker = t => (constraintChecker?.Invoke(t) ?? true);
-                    break;
-            }
-
+            visitor.GenericParameterChecker = t => (constraintChecker?.Invoke(t) ?? true);
             return visitor;
         }
 
         public TBuilder OfType<V>()
         {
             var stringFromType = GetStringFromType(typeof(V));
-            switch (visitor)
-            {
-                case ClassVisitorBuilder c:
-                    c.GenericParameterChecker = t =>
-                        (constraintChecker?.Invoke(t) ?? true)
-                        && t.ConstraintTypes.Any(x => x.ToDisplayString(symbolDisplayFormat) == stringFromType);
-                    break;
-            }
+            visitor.GenericParameterChecker = t =>
+                (constraintChecker?.Invoke(t) ?? true) && t.ConstraintTypes.Any(x => x.ToDisplayString(symbolDisplayFormat) == stringFromType);
 
             return visitor;
         }
@@ -59,17 +47,11 @@ namespace NameInProgress.Builders
         public TBuilder AllOf(params Type[] values)
         {
             IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
-            switch (visitor)
+            visitor.GenericParameterChecker = t =>
             {
-                case ClassVisitorBuilder c:
-                    c.GenericParameterChecker = t =>
-                    {
-                        IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
-                        return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.All(x => constraintTypes.Contains(x));
-                    };
-
-                    break;
-            }
+                IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
+                return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.All(x => constraintTypes.Contains(x));
+            };
 
             return visitor;
         }
@@ -77,17 +59,11 @@ namespace NameInProgress.Builders
         public TBuilder OneOf(params Type[] values)
         {
             IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
-            switch (visitor)
+            visitor.GenericParameterChecker = t =>
             {
-                case ClassVisitorBuilder c:
-                    c.GenericParameterChecker = t =>
-                    {
-                        IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
-                        return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.Any(x => constraintTypes.Contains(x));
-                    };
-
-                    break;
-            }
+                IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
+                return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.Any(x => constraintTypes.Contains(x));
+            };
 
             return visitor;
         }
