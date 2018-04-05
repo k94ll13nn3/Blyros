@@ -46,26 +46,12 @@ namespace NameInProgress.Builders
 
         public TBuilder AllOf(params Type[] values)
         {
-            IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
-            visitor.GenericParameterChecker = t =>
-            {
-                IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
-                return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.All(x => constraintTypes.Contains(x));
-            };
-
-            return visitor;
+            return AllOrOneOf(values, true);
         }
 
         public TBuilder OneOf(params Type[] values)
         {
-            IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
-            visitor.GenericParameterChecker = t =>
-            {
-                IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
-                return (constraintChecker?.Invoke(t) ?? true) && stringsFromTypes.Any(x => constraintTypes.Contains(x));
-            };
-
-            return visitor;
+            return AllOrOneOf(values, false);
         }
 
         public IEqualOrAllOfOrOneOfCondition<ITypeCondition<TBuilder>, GenericConstraint> WithConstraint() => this;
@@ -116,6 +102,35 @@ namespace NameInProgress.Builders
                 default:
                     return false;
             }
+        }
+
+        private TBuilder AllOrOneOf(Type[] values, bool isAllOf)
+        {
+            if (values?.Length > 0)
+            {
+                IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
+                visitor.GenericParameterChecker = t =>
+                {
+                    IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
+                    Func<IEnumerable<string>, Func<string, bool>, bool> selector;
+                    if (isAllOf)
+                    {
+                        selector = Enumerable.All;
+                    }
+                    else
+                    {
+                        selector = Enumerable.Any;
+                    }
+
+                    return (constraintChecker?.Invoke(t) ?? true) && selector(stringsFromTypes, x => constraintTypes.Contains(x));
+                };
+            }
+            else
+            {
+                visitor.GenericParameterChecker = _ => false;
+            }
+
+            return visitor;
         }
     }
 }
