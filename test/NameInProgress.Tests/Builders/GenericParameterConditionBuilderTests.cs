@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Builders;
 using NameInProgress.Conditions;
+using NameInProgress.Enums;
 using Xunit;
 using Builder = NameInProgress.Builders.GenericParameterConditionBuilder<NameInProgress.Builders.IGenericParameterChecker, NameInProgress.Builders.IGenericParameterChecker>;
 
@@ -239,6 +240,23 @@ namespace NameInProgress.Tests.Builders
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
 
+        [Fact]
+        public void GenericParameterChecker_OfTypeAllOfWithMoreTypes_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .OfType()
+                .AllOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
+
+            var typeParameterSymbol = GetTypeParameterSymbol(
+                "System.Collections.Generic.IEnumerable<System.String>",
+                "System.Collections.Generic.IEnumerable<System.DateTime>",
+                "NameInProgress.Builders.IGenericParameterChecker",
+                "NameInProgress.Tests.Builders.GenericParameterConditionBuilderTests");
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
         [Theory]
         [InlineData("System.Collections.Generic.IEnumerable<System.String>")]
         [InlineData("NameInProgress.Builders.IGenericParameterChecker")]
@@ -251,6 +269,297 @@ namespace NameInProgress.Tests.Builders
                 .AllOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
             var typeParameterSymbol = GetTypeParameterSymbol(type);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(GenericConstraint.Class, false, true, false)]
+        [InlineData(GenericConstraint.New, true, false, false)]
+        [InlineData(GenericConstraint.Struct, false, false, true)]
+        public void GenericParameterChecker_WithConstraintEqualTo_ReturnsTrue(GenericConstraint constraint, bool hasNewConstraint, bool hasClassConstraint, bool hasStructTypeConstraint)
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo(constraint)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(hasNewConstraint);
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(hasClassConstraint);
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(hasStructTypeConstraint);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(GenericConstraint.Class)]
+        [InlineData(GenericConstraint.New)]
+        [InlineData(GenericConstraint.Struct)]
+        public void GenericParameterChecker_WithConstraintEqualTo_ReturnsFalse(GenericConstraint constraint)
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo(constraint)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintEqualToWithInvalidParameter_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo((GenericConstraint)(-1))
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOfWithoutParameters_GenericParameterCheckerShouldNotBeNull()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf()
+                .AnyType();
+
+            builder.GenericParameterChecker.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOfWithoutParameters_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf()
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOfWithNullParameters_GenericParameterCheckerShouldNotBeNull()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf(null)
+                .AnyType();
+
+            builder.GenericParameterChecker.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOfWithNullParameters_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf(null)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOf_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf(GenericConstraint.New, GenericConstraint.Class)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(true);
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(true);
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(false);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintAllOfWithMoreConstraints_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf(GenericConstraint.New, GenericConstraint.Class)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(true);
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(true);
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(true);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, true)]
+        [InlineData(false, false, false)]
+        public void GenericParameterChecker_WithConstraintAllOf_ReturnsFalse(bool hasNewConstraint, bool hasClassConstraint, bool hasStructTypeConstraint)
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .AllOf(GenericConstraint.New, GenericConstraint.Class)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(hasNewConstraint);
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(hasClassConstraint);
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(hasStructTypeConstraint);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintOneOfWithoutParameters_GenericParameterCheckerShouldNotBeNull()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf()
+                .AnyType();
+
+            builder.GenericParameterChecker.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintOneOfWithoutParameters_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf()
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintOneOfWithNullParameters_GenericParameterCheckerShouldNotBeNull()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf(null)
+                .AnyType();
+
+            builder.GenericParameterChecker.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintOneOfWithNullParameters_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf(null)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(true, true, false)]
+        public void GenericParameterChecker_WithConstraintOneOf_ReturnsTrue(bool hasNewConstraint, bool hasClassConstraint, bool hasStructTypeConstraint)
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf(GenericConstraint.New, GenericConstraint.Class)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(hasNewConstraint);
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(hasClassConstraint);
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(hasStructTypeConstraint);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_WithConstraintOneOf_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .OneOf(GenericConstraint.New, GenericConstraint.Class)
+                .AnyType();
+
+            var typeParameterSymbol = A.Fake<ITypeParameterSymbol>();
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(true);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_OfTypeWithConstraintEqualTo_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo(GenericConstraint.Struct)
+                .OfType<IEnumerable<string>>();
+
+            var typeParameterSymbol = GetTypeParameterSymbol("System.Collections.Generic.IEnumerable<System.String>");
+            A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(true);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_OfTypeOneOfWithConstraintEqualToWithRightTypeButWrongConstraint_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo(GenericConstraint.Struct)
+                .OfType()
+                .OneOf(typeof(IEnumerable<string>), typeof(IEnumerable<int>));
+
+            var typeParameterSymbol = GetTypeParameterSymbol("System.Collections.Generic.IEnumerable<System.String>");
+            A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(true);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GenericParameterChecker_OfTypeOneOfWithConstraintEqualToWithWrongTypeButRightConstraint_ReturnsFalse()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .WithConstraint()
+                .EqualTo(GenericConstraint.Struct)
+                .OfType()
+                .OneOf(typeof(IEnumerable<string>), typeof(IEnumerable<int>));
+
+            var typeParameterSymbol = GetTypeParameterSymbol("System.Collections.Generic.IEnumerable<System.DateTime>");
+            A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(true);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }

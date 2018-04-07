@@ -40,6 +40,14 @@ namespace NameInProgress.Tests.Builders
         }
 
         [Fact]
+        public void AccessibilityChecker_EqualToWithInvalidParameter_ThrowsArgumentException()
+        {
+            Action act = () => (new Builder(A.Fake<IAccessibilityChecker>()) as IAccessibilityCondition<IAccessibilityChecker>).EqualTo((MemberAccessibility)(-1));
+
+            act.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
         public void AccessibilityChecker_OneOf_ReturnsFalse()
         {
             IAccessibilityChecker builder =

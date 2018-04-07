@@ -64,13 +64,29 @@ namespace NameInProgress.Builders
 
         public ITypeCondition<TBuilder> AllOf(params GenericConstraint[] values)
         {
-            constraintChecker = t => values.All(c => CheckConstraint(t, c));
+            if (values?.Length > 0)
+            {
+                constraintChecker = t => values.All(c => CheckConstraint(t, c));
+            }
+            else
+            {
+                constraintChecker = _ => false;
+            }
+
             return this;
         }
 
         public ITypeCondition<TBuilder> OneOf(params GenericConstraint[] values)
         {
-            constraintChecker = t => values.Any(c => CheckConstraint(t, c));
+            if (values?.Length > 0)
+            {
+                constraintChecker = t => values.Any(c => CheckConstraint(t, c));
+            }
+            else
+            {
+                constraintChecker = _ => false;
+            }
+
             return this;
         }
 
