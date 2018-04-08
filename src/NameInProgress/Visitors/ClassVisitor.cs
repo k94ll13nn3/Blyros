@@ -42,7 +42,6 @@ namespace NameInProgress.Visitors
                 return;
             }
 
-            // It seems that enums and structs alsor have TypeKind.Class as TypeKind.
             if (symbol.TypeKind != TypeKind.Class)
             {
                 return;
