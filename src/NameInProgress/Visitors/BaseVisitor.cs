@@ -6,8 +6,13 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace NameInProgress.Visitors
 {
+    /// <summary>
+    /// Base class for all visitors.
+    /// </summary>
+    /// <typeparam name="T">The type of entity to visit.</typeparam>
     internal abstract class BaseVisitor<T> : SymbolVisitor, IVisitor<T>
     {
+        /// <inheritdoc/>
         public IEnumerable<T> Execute(string location)
         {
             MetadataReference testAssembly = MetadataReference.CreateFromFile(location);
@@ -43,8 +48,13 @@ namespace NameInProgress.Visitors
             return GetResults();
         }
 
+        /// <inheritdoc/>
         public IEnumerable<T> Execute(Type type) => Execute(type.Assembly.Location);
 
+        /// <summary>
+        /// Gets the result of the execution.
+        /// </summary>
+        /// <returns>A list of matching entities.</returns>
         public abstract IEnumerable<T> GetResults();
     }
 }

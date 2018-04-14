@@ -6,13 +6,37 @@ using NameInProgress.Entities;
 
 namespace NameInProgress.Visitors
 {
+    /// <summary>
+    /// The visitor for classes.
+    /// </summary>
     internal class ClassVisitor : BaseVisitor<ClassEntity>
     {
+        /// <summary>
+        /// The matching classes.
+        /// </summary>
         private ICollection<ClassEntity> classes;
+
+        /// <summary>
+        /// The name checking function.
+        /// </summary>
         private Func<string, bool> nameChecker;
+
+        /// <summary>
+        /// The name accessibility function.
+        /// </summary>
         private Func<Accessibility, bool> accessibilityChecker;
+
+        /// <summary>
+        /// The name generic parameter function.
+        /// </summary>
         private Func<ITypeParameterSymbol, bool> genericParameterChecker;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClassVisitor"/> class.
+        /// </summary>
+        /// <param name="nameChecker">The name checking function.</param>
+        /// <param name="accessibilityChecker">The name accessibility function.</param>
+        /// <param name="genericParameterChecker">The name generic parameter function.</param>
         public ClassVisitor(Func<string, bool> nameChecker, Func<Accessibility, bool> accessibilityChecker, Func<ITypeParameterSymbol, bool> genericParameterChecker)
         {
             classes = new List<ClassEntity>();
@@ -21,11 +45,13 @@ namespace NameInProgress.Visitors
             this.genericParameterChecker = genericParameterChecker;
         }
 
+        /// <inheritdoc/>
         public override void VisitAssembly(IAssemblySymbol symbol)
         {
             symbol.GlobalNamespace.Accept(this);
         }
 
+        /// <inheritdoc/>
         public override void VisitNamespace(INamespaceSymbol symbol)
         {
             foreach (INamespaceOrTypeSymbol childSymbol in symbol.GetMembers())
@@ -34,6 +60,7 @@ namespace NameInProgress.Visitors
             }
         }
 
+        /// <inheritdoc/>
         public override void VisitNamedType(INamedTypeSymbol symbol)
         {
             // Didn't find any information on this...
@@ -65,6 +92,7 @@ namespace NameInProgress.Visitors
             classes.Add(new ClassEntity { Name = symbol.ToString() });
         }
 
+        /// <inheritdoc/>
         public override IEnumerable<ClassEntity> GetResults() => classes;
     }
 }

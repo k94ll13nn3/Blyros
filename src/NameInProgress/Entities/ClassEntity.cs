@@ -1,7 +1,13 @@
 ﻿namespace NameInProgress.Entities
 {
+    /// <summary>
+    /// Represents a class.
+    /// </summary>
     public class ClassEntity
     {
-        public string Name { get; set; }
+        /// <summary>
+        /// Gets the name of the class.
+        /// </summary>
+        public string Name { get; internal set; }
     }
 }
