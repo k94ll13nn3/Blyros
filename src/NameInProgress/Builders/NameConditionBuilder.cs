@@ -4,19 +4,33 @@ using NameInProgress.Conditions;
 
 namespace NameInProgress.Builders
 {
+    /// <summary>
+    /// Builder for creating a condition on names.
+    /// </summary>
+    /// <typeparam name="T">The type of the visitor that will use the condition.</typeparam>
+    /// <typeparam name="TBuilder">The type of the object that will be returned at the end of the chain.</typeparam>
     internal class NameConditionBuilder<T, TBuilder> :
         INameCondition<TBuilder>
         where T : TBuilder, INameChecker
     {
+        /// <summary>
+        /// The visitor that will use the condition.
+        /// </summary>
         private T visitor;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NameConditionBuilder{T1, T2}"/> class.
+        /// </summary>
+        /// <param name="visitor">The visitor that will use the condition.</param>
         public NameConditionBuilder(T visitor)
         {
             this.visitor = visitor;
         }
 
+        /// <inheritdoc/>
         public TBuilder Like(string value) => Like(value, false);
 
+        /// <inheritdoc/>
         public TBuilder Like(string value, bool ignoreCase)
         {
             if (value == null)
@@ -39,6 +53,7 @@ namespace NameInProgress.Builders
             }
         }
 
+        /// <inheritdoc/>
         public TBuilder EqualTo(string value)
         {
             if (value == null)
@@ -53,6 +68,7 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
+        /// <inheritdoc/>
         public TBuilder OneOf(params string[] values)
         {
             if (values?.Length > 0)

@@ -7,17 +7,30 @@ using NameInProgress.Enums;
 
 namespace NameInProgress.Builders
 {
+    /// <summary>
+    /// Builder for creating a condition on accessibility.
+    /// </summary>
+    /// <typeparam name="T">The type of the visitor that will use the condition.</typeparam>
+    /// <typeparam name="TBuilder">The type of the object that will be returned at the end of the chain.</typeparam>
     internal class AccessibilityConditionBuilder<T, TBuilder> :
         IAccessibilityCondition<TBuilder>
         where T : TBuilder, IAccessibilityChecker
     {
+        /// <summary>
+        /// The visitor that will use the condition.
+        /// </summary>
         private T visitor;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccessibilityConditionBuilder{T1, T2}"/> class.
+        /// </summary>
+        /// <param name="visitor">The visitor that will use the condition.</param>
         public AccessibilityConditionBuilder(T visitor)
         {
             this.visitor = visitor;
         }
 
+        /// <inheritdoc/>
         public TBuilder EqualTo(MemberAccessibility value)
         {
             Accessibility mappedAccessibility = MapAccessibility(value);
@@ -26,6 +39,7 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
+        /// <inheritdoc/>
         public TBuilder OneOf(params MemberAccessibility[] values)
         {
             var mappedAccessibilities = new List<Accessibility?>();
@@ -49,6 +63,11 @@ namespace NameInProgress.Builders
             return visitor;
         }
 
+        /// <summary>
+        /// Maps a <see cref="MemberAccessibility"/> to a <see cref="Accessibility"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="MemberAccessibility"/> to map.</param>
+        /// <returns>The mapped <see cref="Accessibility"/>.</returns>
         private static Accessibility MapAccessibility(MemberAccessibility value)
         {
             switch (value)
