@@ -86,6 +86,33 @@ namespace NameInProgress.Tests.Builders
         }
 
         [Fact]
+        public void GenericParameterChecker_OfTypeWithTuples_ReturnsTrue()
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .OfType<(int, int)>();
+
+            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof((int, int)));
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(typeof((int, int)))]
+        [InlineData(typeof((int, int, int)))]
+        [InlineData(typeof((string, int)))]
+        public void GenericParameterChecker_OfTypeWithTuples_ReturnsFalse(Type type)
+        {
+            IGenericParameterChecker builder =
+                (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
+                .OfType<(int, string)>();
+
+            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+
+            builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
+        }
+
+        [Fact]
         public void GenericParameterChecker_OfTypeOneOfWithoutParameters_GenericParameterCheckerShouldNotBeNull()
         {
             IGenericParameterChecker builder =
