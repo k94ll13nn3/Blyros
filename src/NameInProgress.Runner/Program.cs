@@ -1,6 +1,7 @@
 ﻿using System;
 using NameInProgress.Builders;
 using NameInProgress.Enums;
+using NameInProgress.Tests.Data;
 
 namespace NameInProgress.Runner
 {
@@ -25,48 +26,16 @@ namespace NameInProgress.Runner
                 //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.Class).AnyType()
                 //.WithGenericParameter().WithConstraint().OneOf(GenericConstraint.Class, GenericConstraint.Struct).AnyType()
                 //.WithGenericParameter().WithConstraint().AllOf(GenericConstraint.Class, GenericConstraint.New).AnyType()
-                //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).AnyType()
+                .WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).AnyType()
                 //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).OfType<IDisposable>()
                 // -------------- to move to unit tests
 
                 .Build();
-            var classes = builder.Execute(typeof(Program));
+            var classes = builder.Execute(typeof(ITruc2));
             foreach (var classEntity in classes)
             {
                 Console.WriteLine(classEntity.Name);
             }
         }
-    }
-
-    public interface ITruc2
-    {
-    }
-
-    public interface ITruc<T, V>
-    {
-    }
-
-    public class Truc<U> where U : ITruc<DateTime, bool>
-    {
-    }
-
-    public class Truc2<V> where V : class, ITruc2, new()
-    {
-    }
-
-    public class Truc3<V> where V : ITruc2, IDisposable, new()
-    {
-    }
-
-    public class Truc4<V> where V : struct
-    {
-    }
-
-    public enum Enum
-    {
-    }
-
-    public struct Struct
-    {
     }
 }

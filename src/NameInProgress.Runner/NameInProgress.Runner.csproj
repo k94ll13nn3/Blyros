@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\test\NameInProgress.Tests.Data\NameInProgress.Tests.Data.csproj" />
     <ProjectReference Include="..\NameInProgress\NameInProgress.csproj" />
   </ItemGroup>
 

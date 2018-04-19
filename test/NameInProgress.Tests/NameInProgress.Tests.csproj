@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NameInProgress\NameInProgress.csproj" />
+    <ProjectReference Include="..\NameInProgress.Tests.Data\NameInProgress.Tests.Data.csproj" />
   </ItemGroup>
   
 </Project>
