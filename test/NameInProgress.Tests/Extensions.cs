@@ -8,9 +8,13 @@ using Microsoft.CodeAnalysis;
 
 namespace NameInProgress.Tests
 {
-    public class TestsWithTypes
+    public static class Extensions
     {
-        protected ITypeParameterSymbol GetTypeParameterSymbol(params Type[] types)
+        public static ITypeParameterSymbol GetFakeTypeParameterSymbol(this Type type) => GetFakeTypeParameterSymbolInternal(type);
+
+        public static ITypeParameterSymbol GetFakeTypeParameterSymbol(this Type[] types) => GetFakeTypeParameterSymbolInternal(types);
+
+        private static ITypeParameterSymbol GetFakeTypeParameterSymbolInternal(params Type[] types)
         {
             var typeSymbols = new List<ITypeSymbol>();
             foreach (Type type in types)

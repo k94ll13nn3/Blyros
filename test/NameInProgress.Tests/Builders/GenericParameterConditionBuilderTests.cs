@@ -11,7 +11,7 @@ using Builder = NameInProgress.Builders.GenericParameterConditionBuilder<NameInP
 
 namespace NameInProgress.Tests.Builders
 {
-    public class GenericParameterConditionBuilderTests : TestsWithTypes
+    public class GenericParameterConditionBuilderTests
     {
         [Fact]
         public void GenericParameterChecker_AnyType_ReturnsTrue()
@@ -30,7 +30,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IGenericParameterChecker>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IGenericParameterChecker));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IGenericParameterChecker).GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -44,7 +44,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IGenericParameterChecker>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -56,7 +56,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IGenericParameterChecker>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IGenericParameterChecker), typeof(INameChecker));
+            ITypeParameterSymbol typeParameterSymbol = new[] { typeof(IGenericParameterChecker), typeof(INameChecker) }.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -68,7 +68,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IEnumerable<string>>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IEnumerable<string>));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IEnumerable<string>).GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -80,7 +80,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IEnumerable<string>>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IEnumerable<IGenericParameterChecker>));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IEnumerable<IGenericParameterChecker>).GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -92,7 +92,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<(int, int)>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof((int, int)));
+            ITypeParameterSymbol typeParameterSymbol = typeof((int, int)).GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -107,7 +107,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<(int, string)>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -133,7 +133,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -159,7 +159,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf(null);
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -175,7 +175,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -190,7 +190,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -216,7 +216,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .AllOf();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -242,7 +242,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .AllOf(null);
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -255,10 +255,13 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .AllOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(
+            ITypeParameterSymbol typeParameterSymbol = new[]
+            {
                 typeof(IEnumerable<string>),
                 typeof(IGenericParameterChecker),
-                typeof(GenericParameterConditionBuilderTests));
+                typeof(GenericParameterConditionBuilderTests)
+            }
+            .GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -271,11 +274,14 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .AllOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(
+            ITypeParameterSymbol typeParameterSymbol = new[]
+            {
                 typeof(IEnumerable<string>),
                 typeof(IEnumerable<DateTime>),
                 typeof(IGenericParameterChecker),
-                typeof(GenericParameterConditionBuilderTests));
+                typeof(GenericParameterConditionBuilderTests)
+            }
+            .GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
@@ -291,7 +297,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .AllOf(typeof(IGenericParameterChecker), typeof(GenericParameterConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(type);
+            ITypeParameterSymbol typeParameterSymbol = type.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
         }
@@ -549,7 +555,7 @@ namespace NameInProgress.Tests.Builders
                 .EqualTo(GenericConstraint.Struct)
                 .OfType<IEnumerable<string>>();
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IEnumerable<string>));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IEnumerable<string>).GetFakeTypeParameterSymbol();
             A.CallTo(() => typeParameterSymbol.HasValueTypeConstraint).Returns(true);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
@@ -565,7 +571,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf(typeof(IEnumerable<string>), typeof(IEnumerable<int>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IEnumerable<string>));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IEnumerable<string>).GetFakeTypeParameterSymbol();
             A.CallTo(() => typeParameterSymbol.HasConstructorConstraint).Returns(true);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();
@@ -581,7 +587,7 @@ namespace NameInProgress.Tests.Builders
                 .OfType()
                 .OneOf(typeof(IEnumerable<string>), typeof(IEnumerable<int>));
 
-            ITypeParameterSymbol typeParameterSymbol = GetTypeParameterSymbol(typeof(IEnumerable<DateTime>));
+            ITypeParameterSymbol typeParameterSymbol = typeof(IEnumerable<DateTime>).GetFakeTypeParameterSymbol();
             A.CallTo(() => typeParameterSymbol.HasReferenceTypeConstraint).Returns(true);
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeFalse();

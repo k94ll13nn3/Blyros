@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NameInProgress.Tests.Builders
 {
-    public class ClassVisitorBuilderTests : TestsWithTypes
+    public class ClassVisitorBuilderTests
     {
         [Fact]
         public void WithName_WithGoodParameter_ReturnsTrue()
@@ -46,7 +46,7 @@ namespace NameInProgress.Tests.Builders
         {
             var builder = new ClassVisitorBuilder().WithGenericParameter().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
 
-            builder.GenericParameterChecker(GetTypeParameterSymbol(typeof(ClassVisitorBuilder))).Should().BeTrue();
+            builder.GenericParameterChecker(typeof(ClassVisitorBuilder).GetFakeTypeParameterSymbol()).Should().BeTrue();
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace NameInProgress.Tests.Builders
         {
             var builder = new ClassVisitorBuilder().WithGenericParameter().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
 
-            builder.GenericParameterChecker(GetTypeParameterSymbol(typeof(ClassVisitorBuilderTests))).Should().BeFalse();
+            builder.GenericParameterChecker(typeof(ClassVisitorBuilderTests).GetFakeTypeParameterSymbol()).Should().BeFalse();
         }
 
         [Fact]
