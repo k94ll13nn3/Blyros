@@ -38,9 +38,9 @@ namespace NameInProgress.Visitors
 
             platformAssemblies.Add(testAssembly);
 
-            // For now, private member cannot be seen, but should be solved in 15.7, see https://github.com/dotnet/roslyn/pull/24468.
             Compilation compilation = CSharpCompilation
                 .Create(nameof(NameInProgress))
+                .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithMetadataImportOptions(MetadataImportOptions.All))
                 .WithReferences(platformAssemblies);
 
             Visit(compilation.GetAssemblyOrModuleSymbol(testAssembly));
