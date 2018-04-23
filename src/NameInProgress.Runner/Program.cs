@@ -15,6 +15,7 @@ namespace NameInProgress.Runner
             Console.WriteLine("Program started...");
             var builder = NameInProgressBuilder
                 .GetClasses()
+                .WithName().Like("Truc", true)
                 //.WithName().Like("visi", true)
                 //.WithAccessibility().OneOf(MemberAccessibility.Internal, MemberAccessibility.Public)
 
@@ -26,7 +27,7 @@ namespace NameInProgress.Runner
                 //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.Class).AnyType()
                 //.WithGenericParameter().WithConstraint().OneOf(GenericConstraint.Class, GenericConstraint.Struct).AnyType()
                 //.WithGenericParameter().WithConstraint().AllOf(GenericConstraint.Class, GenericConstraint.New).AnyType()
-                .WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).AnyType()
+                //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).AnyType()
                 //.WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).OfType<IDisposable>()
                 // -------------- to move to unit tests
 

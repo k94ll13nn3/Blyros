@@ -89,7 +89,7 @@ namespace NameInProgress.Visitors
                 return;
             }
 
-            classes.Add(new ClassEntity { Name = symbol.ToString() });
+            classes.Add(new ClassEntity { Name = symbol.Name, FullName = symbol.ToString() });
         }
 
         /// <inheritdoc/>
