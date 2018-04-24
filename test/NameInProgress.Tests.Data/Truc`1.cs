@@ -4,5 +4,9 @@ namespace NameInProgress.Tests.Data
 {
     public class Truc<U> where U : ITruc<DateTime, bool>
     {
+        private class PrivateThing
+        {
+
+        }
     }
 }

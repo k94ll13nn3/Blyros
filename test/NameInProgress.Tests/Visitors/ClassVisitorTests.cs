@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NameInProgress.Builders;
 using NameInProgress.Entities;
+using NameInProgress.Enums;
 using NameInProgress.Tests.Data;
 using Xunit;
 
@@ -64,6 +65,25 @@ namespace NameInProgress.Tests.Visitors
             };
 
             classes.Should().HaveCount(5);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithAccessibilityPrivate()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithAccessibility().EqualTo(MemberAccessibility.Private)
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "PrivateThing", FullName = "NameInProgress.Tests.Data.Truc<U>.PrivateThing" },
+            };
+
+            classes.Should().HaveCount(1);
             classes.Should().BeEquivalentTo(expected);
         }
     }

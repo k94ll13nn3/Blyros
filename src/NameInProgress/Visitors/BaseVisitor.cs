@@ -56,5 +56,20 @@ namespace NameInProgress.Visitors
         /// </summary>
         /// <returns>A list of matching entities.</returns>
         public abstract IEnumerable<T> GetResults();
+
+        /// <summary>
+        /// Implements the default visit for a symbol. The <see cref="SymbolVisitor.DefaultVisit(ISymbol)"/> method is not overriden to use this implementation.
+        /// </summary>
+        /// <param name="symbol">The symbol to visit.</param>
+        protected void DefaultVisitInternal(ISymbol symbol)
+        {
+            if (symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol)
+            {
+                foreach (ISymbol child in namespaceOrTypeSymbol.GetMembers())
+                {
+                    child.Accept(this);
+                }
+            }
+        }
     }
 }

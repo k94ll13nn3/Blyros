@@ -54,15 +54,14 @@ namespace NameInProgress.Visitors
         /// <inheritdoc/>
         public override void VisitNamespace(INamespaceSymbol symbol)
         {
-            foreach (INamespaceOrTypeSymbol childSymbol in symbol.GetMembers())
-            {
-                childSymbol.Accept(this);
-            }
+            DefaultVisitInternal(symbol);
         }
 
         /// <inheritdoc/>
         public override void VisitNamedType(INamedTypeSymbol symbol)
         {
+            DefaultVisitInternal(symbol);
+
             // Didn't find any information on this...
             if (symbol.Name == "<Module>")
             {
