@@ -1,6 +1,6 @@
 ﻿namespace NameInProgress.Tests.Data
 {
-    public class TRuc
+    public class ClassWithNameLikeName
     {
     }
 }

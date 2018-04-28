@@ -14,13 +14,13 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().EqualTo("Truc2")
+                .WithName().EqualTo("Name")
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             classes.Should().HaveCount(1);
-            classes.Should().BeEquivalentTo(new[] { new ClassEntity { Name = "Truc2", FullName = "NameInProgress.Tests.Data.Truc2<V>" } });
+            classes.Should().BeEquivalentTo(new[] { new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" } });
         }
 
         [Fact]
@@ -28,20 +28,18 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("Truc")
+                .WithName().Like("Name")
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             var expected = new[]
             {
-                 new ClassEntity { Name = "Truc", FullName = "NameInProgress.Tests.Data.Truc<U>" },
-                 new ClassEntity { Name = "Truc2", FullName = "NameInProgress.Tests.Data.Truc2<V>" },
-                 new ClassEntity { Name = "Truc3", FullName = "NameInProgress.Tests.Data.Truc3<V>" },
-                 new ClassEntity { Name = "Truc4", FullName = "NameInProgress.Tests.Data.Truc4<V>" },
+                 new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" },
+                 new ClassEntity { Name = "ClassWithNameLikeName", FullName = "NameInProgress.Tests.Data.ClassWithNameLikeName" },
             };
 
-            classes.Should().HaveCount(4);
+            classes.Should().HaveCount(2);
             classes.Should().BeEquivalentTo(expected);
         }
 
@@ -50,26 +48,24 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("Truc", true)
+                .WithName().Like("Name", true)
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             var expected = new[]
             {
-                 new ClassEntity { Name = "Truc", FullName = "NameInProgress.Tests.Data.Truc<U>" },
-                 new ClassEntity { Name = "Truc2", FullName = "NameInProgress.Tests.Data.Truc2<V>" },
-                 new ClassEntity { Name = "Truc3", FullName = "NameInProgress.Tests.Data.Truc3<V>" },
-                 new ClassEntity { Name = "Truc4", FullName = "NameInProgress.Tests.Data.Truc4<V>" },
-                 new ClassEntity { Name = "TRuc", FullName = "NameInProgress.Tests.Data.TRuc" },
+                 new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" },
+                 new ClassEntity { Name = "ClassWithNameLikeName", FullName = "NameInProgress.Tests.Data.ClassWithNameLikeName" },
+                 new ClassEntity { Name = "ClassWithNAmEWithWeirdCase", FullName = "NameInProgress.Tests.Data.ClassWithNAmEWithWeirdCase" },
             };
 
-            classes.Should().HaveCount(5);
+            classes.Should().HaveCount(3);
             classes.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
-        public void ClassVisitor_WithAccessibilityPrivate()
+        public void ClassVisitor_WithAccessibilityEqualTo()
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
@@ -80,7 +76,45 @@ namespace NameInProgress.Tests.Visitors
 
             var expected = new[]
             {
-                 new ClassEntity { Name = "PrivateThing", FullName = "NameInProgress.Tests.Data.Truc<U>.PrivateThing" },
+                 new ClassEntity { Name = "PrivateClass", FullName = "NameInProgress.Tests.Data.ClassWithInnerPrivateClass.PrivateClass" },
+            };
+
+            classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithGenericParameterOfType()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithGenericParameter().OfType<IInterface>()
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithGenericParameterIInterface", FullName = "NameInProgress.Tests.Data.ClassWithGenericParameterIInterface<T>" },
+            };
+
+            classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithGenericParameterWithConstraintEqualToAnyType()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithGenericParameter().WithConstraint().EqualTo(GenericConstraint.New).AnyType()
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithGenericParameterWithNewConstraint", FullName = "NameInProgress.Tests.Data.ClassWithGenericParameterWithNewConstraint<T>" },
             };
 
             classes.Should().HaveCount(1);

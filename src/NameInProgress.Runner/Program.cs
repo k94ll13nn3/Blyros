@@ -32,7 +32,7 @@ namespace NameInProgress.Runner
                 // -------------- to move to unit tests
 
                 .Build();
-            var classes = builder.Execute(typeof(ITruc2));
+            var classes = builder.Execute(typeof(IInterface));
             foreach (var classEntity in classes)
             {
                 Console.WriteLine(classEntity.Name);
