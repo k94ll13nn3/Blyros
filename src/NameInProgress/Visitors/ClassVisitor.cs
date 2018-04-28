@@ -32,17 +32,24 @@ namespace NameInProgress.Visitors
         private Func<ITypeParameterSymbol, bool> genericParameterChecker;
 
         /// <summary>
+        /// The namespace checking function.
+        /// </summary>
+        private Func<string, bool> namespaceChecker;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ClassVisitor"/> class.
         /// </summary>
         /// <param name="nameChecker">The name checking function.</param>
         /// <param name="accessibilityChecker">The name accessibility function.</param>
         /// <param name="genericParameterChecker">The name generic parameter function.</param>
-        public ClassVisitor(Func<string, bool> nameChecker, Func<Accessibility, bool> accessibilityChecker, Func<ITypeParameterSymbol, bool> genericParameterChecker)
+        /// <param name="namespaceChecker">The namespace checking function.</param>
+        public ClassVisitor(Func<string, bool> nameChecker, Func<Accessibility, bool> accessibilityChecker, Func<ITypeParameterSymbol, bool> genericParameterChecker, Func<string, bool> namespaceChecker)
         {
             classes = new List<ClassEntity>();
             this.nameChecker = nameChecker;
             this.accessibilityChecker = accessibilityChecker;
             this.genericParameterChecker = genericParameterChecker;
+            this.namespaceChecker = namespaceChecker;
         }
 
         /// <inheritdoc/>
@@ -74,6 +81,11 @@ namespace NameInProgress.Visitors
             }
 
             if (nameChecker?.Invoke(symbol.Name) == false)
+            {
+                return;
+            }
+
+            if (namespaceChecker?.Invoke(symbol.ContainingNamespace.ToString()) == false)
             {
                 return;
             }

@@ -14,13 +14,13 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().EqualTo("Name")
+                .WithName().EqualTo("ClassNamed")
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             classes.Should().HaveCount(1);
-            classes.Should().BeEquivalentTo(new[] { new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" } });
+            classes.Should().BeEquivalentTo(new[] { new ClassEntity { Name = "ClassNamed", FullName = "NameInProgress.Tests.Data.ClassNamed" } });
         }
 
         [Fact]
@@ -28,15 +28,15 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("Name")
+                .WithName().Like("Named")
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             var expected = new[]
             {
-                 new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" },
-                 new ClassEntity { Name = "ClassWithNameLikeName", FullName = "NameInProgress.Tests.Data.ClassWithNameLikeName" },
+                 new ClassEntity { Name = "ClassNamed", FullName = "NameInProgress.Tests.Data.ClassNamed" },
+                 new ClassEntity { Name = "ClassNamedLikeNamed", FullName = "NameInProgress.Tests.Data.ClassNamedLikeNamed" },
             };
 
             classes.Should().HaveCount(2);
@@ -48,16 +48,16 @@ namespace NameInProgress.Tests.Visitors
         {
             var builder = NameInProgressBuilder
                 .GetClasses()
-                .WithName().Like("Name", true)
+                .WithName().Like("Named", true)
                 .Build();
 
             var classes = builder.Execute(typeof(Struct));
 
             var expected = new[]
             {
-                 new ClassEntity { Name = "Name", FullName = "NameInProgress.Tests.Data.Name" },
-                 new ClassEntity { Name = "ClassWithNameLikeName", FullName = "NameInProgress.Tests.Data.ClassWithNameLikeName" },
-                 new ClassEntity { Name = "ClassWithNAmEWithWeirdCase", FullName = "NameInProgress.Tests.Data.ClassWithNAmEWithWeirdCase" },
+                 new ClassEntity { Name = "ClassNamed", FullName = "NameInProgress.Tests.Data.ClassNamed" },
+                 new ClassEntity { Name = "ClassNamedLikeNamed", FullName = "NameInProgress.Tests.Data.ClassNamedLikeNamed" },
+                 new ClassEntity { Name = "ClassNaMEdWithWeirdCase", FullName = "NameInProgress.Tests.Data.ClassNaMEdWithWeirdCase" },
             };
 
             classes.Should().HaveCount(3);
@@ -118,6 +118,61 @@ namespace NameInProgress.Tests.Visitors
             };
 
             classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithNamespaceEqualTo()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithNamespace().EqualTo("NameInProgress.Tests.Data.Namespace")
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(new[] { new ClassEntity { Name = "ClassWithNamespace", FullName = "NameInProgress.Tests.Data.Namespace.ClassWithNamespace" } });
+        }
+
+        [Fact]
+        public void ClassVisitor_WithNamespaceLike()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithNamespace().Like("Namespace")
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithNamespace", FullName = "NameInProgress.Tests.Data.Namespace.ClassWithNamespace" },
+                 new ClassEntity { Name = "ClassWithNamespaceLikeNamespace", FullName = "NameInProgress.Tests.Data.Namespace.Like.ClassWithNamespaceLikeNamespace" },
+            };
+
+            classes.Should().HaveCount(2);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithNamespaceLikeIgnoringCase()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithNamespace().Like("Namespace", true)
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithNamespace", FullName = "NameInProgress.Tests.Data.Namespace.ClassWithNamespace" },
+                 new ClassEntity { Name = "ClassWithNamespaceLikeNamespace", FullName = "NameInProgress.Tests.Data.Namespace.Like.ClassWithNamespaceLikeNamespace" },
+                 new ClassEntity { Name = "ClassWithNamespaceWithWeirdCase", FullName = "NameInProgress.Tests.Data.NAmeSPace.ClassWithNamespaceWithWeirdCase" },
+            };
+
+            classes.Should().HaveCount(3);
             classes.Should().BeEquivalentTo(expected);
         }
     }

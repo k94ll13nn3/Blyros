@@ -1,6 +1,6 @@
 ﻿namespace NameInProgress.Tests.Data
 {
-    public class Name
+    public class ClassNamed
     {
     }
 }

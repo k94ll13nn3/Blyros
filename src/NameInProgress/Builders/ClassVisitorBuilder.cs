@@ -13,7 +13,8 @@ namespace NameInProgress.Builders
         IClassVisitorBuilder,
         IAccessibilityChecker,
         IGenericParameterChecker,
-        INameChecker
+        INameChecker,
+        INamespaceChecker
     {
         /// <inheritdoc/>
         public Func<Accessibility, bool> AccessibilityChecker { get; set; }
@@ -23,6 +24,9 @@ namespace NameInProgress.Builders
 
         /// <inheritdoc/>
         public Func<string, bool> NameChecker { get; set; }
+
+        /// <inheritdoc/>
+        public Func<string, bool> NamespaceChecker { get; set; }
 
         /// <inheritdoc/>
         public INameCondition<IClassVisitorBuilder> WithName()
@@ -43,6 +47,12 @@ namespace NameInProgress.Builders
         }
 
         /// <inheritdoc/>
-        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker);
+        public INamespaceCondition<IClassVisitorBuilder> WithNamespace()
+        {
+            return new NamespaceConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
+        }
+
+        /// <inheritdoc/>
+        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker, NamespaceChecker);
     }
 }
