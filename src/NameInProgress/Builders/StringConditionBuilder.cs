@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using NameInProgress.Conditions;
 
 namespace NameInProgress.Builders
 {
     /// <summary>
     /// Builder for creating a condition on strings.
     /// </summary>
-    /// <typeparam name="T">The type of the visitor that will use the condition.</typeparam>
     /// <typeparam name="TBuilder">The type of the object that will be returned at the end of the chain.</typeparam>
-    internal abstract class StringConditionBuilder<T, TBuilder>
-        where T : TBuilder
+    internal class StringConditionBuilder<TBuilder> :
+        IStringCondition<TBuilder>
     {
         /// <summary>
         /// The visitor that will use the condition.
         /// </summary>
-        protected T visitor;
+        private TBuilder visitor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StringConditionBuilder{T1, T2}"/> class.
+        /// The visitor that will use the condition.
+        /// </summary>
+        private Action<Func<string, bool>> setChecker;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringConditionBuilder{T1}"/> class.
         /// </summary>
         /// <param name="visitor">The visitor that will use the condition.</param>
-        public StringConditionBuilder(T visitor)
+        /// <param name="setChecker">The action to call to set the checher.</param>
+        public StringConditionBuilder(TBuilder visitor, Action<Func<string, bool>> setChecker)
         {
             this.visitor = visitor;
+            this.setChecker = setChecker;
 
-            SetChecker(_ => false);
+            setChecker(_ => false);
         }
 
         /// <inheritdoc/>
@@ -36,7 +43,7 @@ namespace NameInProgress.Builders
         {
             if (value != null)
             {
-                SetChecker(Contains);
+                setChecker(Contains);
             }
 
             return visitor;
@@ -55,7 +62,7 @@ namespace NameInProgress.Builders
         {
             if (value != null)
             {
-                SetChecker(s => s == value);
+                setChecker(s => s == value);
             }
 
             return visitor;
@@ -66,16 +73,10 @@ namespace NameInProgress.Builders
         {
             if (values?.Length > 0)
             {
-                SetChecker(n => values.Contains(n));
+                setChecker(n => values.Contains(n));
             }
 
             return visitor;
         }
-
-        /// <summary>
-        /// Sets the checker function.
-        /// </summary>
-        /// <param name="checker">The function to use.</param>
-        public abstract void SetChecker(Func<string, bool> checker);
     }
 }

@@ -12,10 +12,18 @@ namespace NameInProgress.Builders
     internal class ClassVisitorBuilder :
         IClassVisitorBuilder,
         IAccessibilityChecker,
-        IGenericParameterChecker,
-        INameChecker,
-        INamespaceChecker
+        IGenericParameterChecker
     {
+        /// <summary>
+        /// Gets or sets the function used to check name.
+        /// </summary>
+        public Func<string, bool> NameChecker { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function used to check namespace.
+        /// </summary>
+        public Func<string, bool> NamespaceChecker { get; set; }
+
         /// <inheritdoc/>
         public Func<Accessibility, bool> AccessibilityChecker { get; set; }
 
@@ -23,15 +31,9 @@ namespace NameInProgress.Builders
         public Func<ITypeParameterSymbol, bool> GenericParameterChecker { get; set; }
 
         /// <inheritdoc/>
-        public Func<string, bool> NameChecker { get; set; }
-
-        /// <inheritdoc/>
-        public Func<string, bool> NamespaceChecker { get; set; }
-
-        /// <inheritdoc/>
-        public INameCondition<IClassVisitorBuilder> WithName()
+        public IStringCondition<IClassVisitorBuilder> WithName()
         {
-            return new NameConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
+            return new StringConditionBuilder<IClassVisitorBuilder>(this, checker => NameChecker = checker);
         }
 
         /// <inheritdoc/>
@@ -47,9 +49,9 @@ namespace NameInProgress.Builders
         }
 
         /// <inheritdoc/>
-        public INamespaceCondition<IClassVisitorBuilder> WithNamespace()
+        public IStringCondition<IClassVisitorBuilder> WithNamespace()
         {
-            return new NamespaceConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
+            return new StringConditionBuilder<IClassVisitorBuilder>(this, checker => NamespaceChecker = checker);
         }
 
         /// <inheritdoc/>

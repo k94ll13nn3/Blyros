@@ -31,12 +31,12 @@ namespace NameInProgress.Builders
         /// Returns a builder for building a condition on name.
         /// </summary>
         /// <returns>The builder.</returns>
-        INameCondition<IClassVisitorBuilder> WithName();
+        IStringCondition<IClassVisitorBuilder> WithName();
 
         /// <summary>
         /// Returns a builder for building a condition on namespace.
         /// </summary>
         /// <returns>The builder.</returns>
-        INamespaceCondition<IClassVisitorBuilder> WithNamespace();
+        IStringCondition<IClassVisitorBuilder> WithNamespace();
     }
 }

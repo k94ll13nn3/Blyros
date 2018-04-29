@@ -56,7 +56,7 @@ namespace NameInProgress.Tests.Builders
                 (new Builder(A.Fake<IGenericParameterChecker>()) as IGenericParameterCondition<IGenericParameterChecker>)
                 .OfType<IGenericParameterChecker>();
 
-            ITypeParameterSymbol typeParameterSymbol = new[] { typeof(IGenericParameterChecker), typeof(INameChecker) }.GetFakeTypeParameterSymbol();
+            ITypeParameterSymbol typeParameterSymbol = new[] { typeof(IGenericParameterChecker), typeof(IAccessibilityChecker) }.GetFakeTypeParameterSymbol();
 
             builder.GenericParameterChecker(typeParameterSymbol).Should().BeTrue();
         }
