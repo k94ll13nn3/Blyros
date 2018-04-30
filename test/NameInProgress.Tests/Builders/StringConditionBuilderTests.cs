@@ -11,8 +11,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(StringConditionBuilderTests))]
         public void Checker_EqualTo_ReturnsTrue(string name)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .EqualTo(name);
 
             fakeBuilder.Checker(name).Should().BeTrue();
@@ -21,11 +21,11 @@ namespace NameInProgress.Tests.Builders
         [Theory]
         [InlineData(null, null)]
         [InlineData("", "Lorem")]
-        [InlineData(nameof(StringConditionBuilderTests), nameof(FakeBuilder))]
+        [InlineData(nameof(StringConditionBuilderTests), nameof(FakeBuilder<string>))]
         public void Checker_EqualTo_ReturnsFalse(string name, string equalTo)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .EqualTo(equalTo);
 
             fakeBuilder.Checker(name).Should().BeFalse();
@@ -37,8 +37,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData("Lorem", "")]
         public void Checker_Like_ReturnsTrue(string name, string pattern)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .Like(pattern);
 
             fakeBuilder.Checker(name).Should().BeTrue();
@@ -51,8 +51,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(null, "")]
         public void Checker_Like_ReturnsFalse(string name, string pattern)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .Like(pattern);
 
             fakeBuilder.Checker(name).Should().BeFalse();
@@ -64,8 +64,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData("lorem", "LOREM")]
         public void Checker_LikeIgnoringCase_ReturnsTrue(string name, string pattern)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .Like(pattern, true);
 
             fakeBuilder.Checker(name).Should().BeTrue();
@@ -74,8 +74,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void Checker_OneOfWithoutParameters_CheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf();
 
             fakeBuilder.Checker.Should().NotBeNull();
@@ -87,8 +87,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(StringConditionBuilderTests))]
         public void Checker_OneOfWithoutParameters_ReturnsFalse(string name)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf();
 
             fakeBuilder.Checker(name).Should().BeFalse();
@@ -97,8 +97,8 @@ namespace NameInProgress.Tests.Builders
         [Fact]
         public void Checker_OneOfWithNullParameters_CheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf(null);
 
             fakeBuilder.Checker.Should().NotBeNull();
@@ -110,8 +110,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(StringConditionBuilderTests))]
         public void Checker_OneOfWithNullParameters_ReturnsFalse(string name)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf(null);
 
             fakeBuilder.Checker(name).Should().BeFalse();
@@ -123,8 +123,8 @@ namespace NameInProgress.Tests.Builders
         [InlineData(nameof(StringConditionBuilderTests))]
         public void Checker_OneOf_ReturnsTrue(string name)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf(new[] { "", "Lorem", nameof(StringConditionBuilderTests) });
 
             fakeBuilder.Checker(name).Should().BeTrue();
@@ -132,12 +132,12 @@ namespace NameInProgress.Tests.Builders
 
         [Theory]
         [InlineData(null)]
-        [InlineData(nameof(FakeBuilder))]
+        [InlineData(nameof(FakeBuilder<string>))]
         [InlineData("LoremLorem")]
         public void Checker_OneOf_ReturnsFalse(string name)
         {
-            var fakeBuilder = new FakeBuilder();
-            (new StringConditionBuilder<FakeBuilder>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<string>();
+            (new StringConditionBuilder<FakeBuilder<string>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OneOf(new[] { "", "Lorem", nameof(StringConditionBuilderTests) });
 
             fakeBuilder.Checker(name).Should().BeFalse();

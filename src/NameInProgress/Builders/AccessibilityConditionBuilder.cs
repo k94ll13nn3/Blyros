@@ -10,31 +10,38 @@ namespace NameInProgress.Builders
     /// <summary>
     /// Builder for creating a condition on accessibility.
     /// </summary>
-    /// <typeparam name="T">The type of the visitor that will use the condition.</typeparam>
     /// <typeparam name="TBuilder">The type of the object that will be returned at the end of the chain.</typeparam>
-    internal class AccessibilityConditionBuilder<T, TBuilder> :
+    internal class AccessibilityConditionBuilder<TBuilder> :
         IAccessibilityCondition<TBuilder>
-        where T : TBuilder, IAccessibilityChecker
     {
         /// <summary>
         /// The visitor that will use the condition.
         /// </summary>
-        private T visitor;
+        private TBuilder visitor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccessibilityConditionBuilder{T1, T2}"/> class.
+        /// The visitor that will use the condition.
+        /// </summary>
+        private Action<Func<Accessibility, bool>> setChecker;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccessibilityConditionBuilder{T1}"/> class.
         /// </summary>
         /// <param name="visitor">The visitor that will use the condition.</param>
-        public AccessibilityConditionBuilder(T visitor)
+        /// <param name="setChecker">The action to call to set the checher.</param>
+        public AccessibilityConditionBuilder(TBuilder visitor, Action<Func<Accessibility, bool>> setChecker)
         {
             this.visitor = visitor;
+            this.setChecker = setChecker;
+
+            setChecker(_ => false);
         }
 
         /// <inheritdoc/>
         public TBuilder EqualTo(MemberAccessibility value)
         {
             Accessibility mappedAccessibility = MapAccessibility(value);
-            visitor.AccessibilityChecker = a => a == mappedAccessibility;
+            setChecker(a => a == mappedAccessibility);
 
             return visitor;
         }
@@ -43,22 +50,15 @@ namespace NameInProgress.Builders
         public TBuilder OneOf(params MemberAccessibility[] values)
         {
             var mappedAccessibilities = new List<Accessibility?>();
-            Func<Accessibility, bool> accessibilityChecker;
             foreach (MemberAccessibility value in values ?? Enumerable.Empty<MemberAccessibility>())
             {
                 mappedAccessibilities.Add(MapAccessibility(value));
             }
 
-            if (mappedAccessibilities.Count == 0)
+            if (mappedAccessibilities.Count != 0)
             {
-                accessibilityChecker = _ => false;
+                setChecker(a => mappedAccessibilities.Contains(a));
             }
-            else
-            {
-                accessibilityChecker = a => mappedAccessibilities.Contains(a);
-            }
-
-            visitor.AccessibilityChecker = accessibilityChecker;
 
             return visitor;
         }

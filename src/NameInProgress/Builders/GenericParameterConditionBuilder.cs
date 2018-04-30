@@ -11,18 +11,21 @@ namespace NameInProgress.Builders
     /// <summary>
     /// Builder for creating a condition on generic parameters.
     /// </summary>
-    /// <typeparam name="T">The type of the visitor that will use the condition.</typeparam>
     /// <typeparam name="TBuilder">The type of the object that will be returned at the end of the chain.</typeparam>
-    internal class GenericParameterConditionBuilder<T, TBuilder> :
+    internal class GenericParameterConditionBuilder<TBuilder> :
         IGenericParameterCondition<TBuilder>,
         IAllOfOrOneOfCondition<TBuilder, Type>,
         IEqualOrAllOfOrOneOfCondition<ITypeCondition<TBuilder>, GenericConstraint>
-        where T : TBuilder, IGenericParameterChecker
     {
         /// <summary>
         /// The visitor that will use the condition.
         /// </summary>
-        private T visitor;
+        private TBuilder visitor;
+
+        /// <summary>
+        /// The visitor that will use the condition.
+        /// </summary>
+        private Action<Func<ITypeParameterSymbol, bool>> setChecker;
 
         /// <summary>
         /// The display format used to create a string from a <see cref="ITypeSymbol"/>.
@@ -37,18 +40,22 @@ namespace NameInProgress.Builders
         private Func<ITypeParameterSymbol, bool> constraintChecker;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenericParameterConditionBuilder{T1, T2}"/> class.
+        /// Initializes a new instance of the <see cref="GenericParameterConditionBuilder{T1}"/> class.
         /// </summary>
         /// <param name="visitor">The visitor that will use the condition.</param>
-        public GenericParameterConditionBuilder(T visitor)
+        /// <param name="setChecker">The action to call to set the checher.</param>
+        public GenericParameterConditionBuilder(TBuilder visitor, Action<Func<ITypeParameterSymbol, bool>> setChecker)
         {
             this.visitor = visitor;
+            this.setChecker = setChecker;
+
+            setChecker(_ => false);
         }
 
         /// <inheritdoc/>
         public TBuilder AnyType()
         {
-            visitor.GenericParameterChecker = t => (constraintChecker?.Invoke(t) ?? true);
+            setChecker(t => (constraintChecker?.Invoke(t) ?? true));
             return visitor;
         }
 
@@ -56,8 +63,8 @@ namespace NameInProgress.Builders
         public TBuilder OfType<V>()
         {
             var stringFromType = GetStringFromType(typeof(V));
-            visitor.GenericParameterChecker = t =>
-                (constraintChecker?.Invoke(t) ?? true) && t.ConstraintTypes.Any(x => x.ToDisplayString(symbolDisplayFormat) == stringFromType);
+            setChecker(t =>
+                (constraintChecker?.Invoke(t) ?? true) && t.ConstraintTypes.Any(x => x.ToDisplayString(symbolDisplayFormat) == stringFromType));
 
             return visitor;
         }
@@ -168,25 +175,17 @@ namespace NameInProgress.Builders
             if (values?.Length > 0)
             {
                 IEnumerable<string> stringsFromTypes = values.Select(type => GetStringFromType(type));
-                visitor.GenericParameterChecker = t =>
+                setChecker(t =>
                 {
                     IEnumerable<string> constraintTypes = t.ConstraintTypes.Select(y => y.ToDisplayString(symbolDisplayFormat));
-                    Func<IEnumerable<string>, Func<string, bool>, bool> selector;
+                    Func<IEnumerable<string>, Func<string, bool>, bool> selector = Enumerable.Any;
                     if (isAllOf)
                     {
                         selector = Enumerable.All;
                     }
-                    else
-                    {
-                        selector = Enumerable.Any;
-                    }
 
                     return (constraintChecker?.Invoke(t) ?? true) && selector(stringsFromTypes, x => constraintTypes.Contains(x));
-                };
-            }
-            else
-            {
-                visitor.GenericParameterChecker = _ => false;
+                });
             }
 
             return visitor;

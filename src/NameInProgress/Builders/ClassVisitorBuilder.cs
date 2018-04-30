@@ -9,10 +9,7 @@ namespace NameInProgress.Builders
     /// <summary>
     /// Builder for a the class visitor.
     /// </summary>
-    internal class ClassVisitorBuilder :
-        IClassVisitorBuilder,
-        IAccessibilityChecker,
-        IGenericParameterChecker
+    internal class ClassVisitorBuilder : IClassVisitorBuilder
     {
         /// <summary>
         /// Gets or sets the function used to check name.
@@ -24,10 +21,14 @@ namespace NameInProgress.Builders
         /// </summary>
         public Func<string, bool> NamespaceChecker { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets or sets the function used to check the accessibility.
+        /// </summary>
         public Func<Accessibility, bool> AccessibilityChecker { get; set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets or sets the function used to check generic parameters.
+        /// </summary>
         public Func<ITypeParameterSymbol, bool> GenericParameterChecker { get; set; }
 
         /// <inheritdoc/>
@@ -39,13 +40,13 @@ namespace NameInProgress.Builders
         /// <inheritdoc/>
         public IAccessibilityCondition<IClassVisitorBuilder> WithAccessibility()
         {
-            return new AccessibilityConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
+            return new AccessibilityConditionBuilder<IClassVisitorBuilder>(this, checker => AccessibilityChecker = checker);
         }
 
         /// <inheritdoc/>
         public IGenericParameterCondition<IClassVisitorBuilder> WithGenericParameter()
         {
-            return new GenericParameterConditionBuilder<ClassVisitorBuilder, IClassVisitorBuilder>(this);
+            return new GenericParameterConditionBuilder<IClassVisitorBuilder>(this, checker => GenericParameterChecker = checker);
         }
 
         /// <inheritdoc/>
