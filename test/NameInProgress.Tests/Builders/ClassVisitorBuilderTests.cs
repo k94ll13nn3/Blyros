@@ -58,6 +58,22 @@ namespace NameInProgress.Tests.Builders
         }
 
         [Fact]
+        public void WithNamespace_WithGoodParameter_ReturnsTrue()
+        {
+            var builder = new ClassVisitorBuilder().WithNamespace().EqualTo("NameInProgress.Tests.Builders") as ClassVisitorBuilder;
+
+            builder.NamespaceChecker("NameInProgress.Tests.Builders").Should().BeTrue();
+        }
+
+        [Fact]
+        public void WithNamespace_WithBadParameter_ReturnsFalse()
+        {
+            var builder = new ClassVisitorBuilder().WithNamespace().EqualTo("NameInProgress.Tests.Builders") as ClassVisitorBuilder;
+
+            builder.NamespaceChecker("NameInProgress.Tests.Visitors").Should().BeFalse();
+        }
+
+        [Fact]
         public void Build_Call_ReturnsAClassVisitor()
         {
             new ClassVisitorBuilder().Build().Should().BeOfType<ClassVisitor>();
