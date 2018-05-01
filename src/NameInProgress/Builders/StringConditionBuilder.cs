@@ -18,7 +18,7 @@ namespace NameInProgress.Builders
         private TBuilder visitor;
 
         /// <summary>
-        /// The visitor that will use the condition.
+        /// The action to call to set the checher.
         /// </summary>
         private Action<Func<string, bool>> setChecker;
 

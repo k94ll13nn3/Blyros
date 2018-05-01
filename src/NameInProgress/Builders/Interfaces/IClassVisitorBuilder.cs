@@ -38,5 +38,11 @@ namespace NameInProgress.Builders
         /// </summary>
         /// <returns>The builder.</returns>
         IStringCondition<IClassVisitorBuilder> WithNamespace();
+
+        /// <summary>
+        /// Returns a builder for building a condition on interfaces.
+        /// </summary>
+        /// <returns>The builder.</returns>
+        ITypeCondition<IClassVisitorBuilder> WithInterface();
     }
 }

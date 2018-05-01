@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Entities;
@@ -37,19 +38,31 @@ namespace NameInProgress.Visitors
         private Func<string, bool> namespaceChecker;
 
         /// <summary>
+        /// The interface checking function.
+        /// </summary>
+        private Func<ImmutableArray<ITypeSymbol>, bool> interfaceChecker;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ClassVisitor"/> class.
         /// </summary>
         /// <param name="nameChecker">The name checking function.</param>
         /// <param name="accessibilityChecker">The name accessibility function.</param>
         /// <param name="genericParameterChecker">The name generic parameter function.</param>
         /// <param name="namespaceChecker">The namespace checking function.</param>
-        public ClassVisitor(Func<string, bool> nameChecker, Func<Accessibility, bool> accessibilityChecker, Func<ITypeParameterSymbol, bool> genericParameterChecker, Func<string, bool> namespaceChecker)
+        /// <param name="interfaceChecker">The interface checking function.</param>
+        public ClassVisitor(
+            Func<string, bool> nameChecker,
+            Func<Accessibility, bool> accessibilityChecker,
+            Func<ITypeParameterSymbol, bool> genericParameterChecker,
+            Func<string, bool> namespaceChecker,
+            Func<ImmutableArray<ITypeSymbol>, bool> interfaceChecker)
         {
             classes = new List<ClassEntity>();
             this.nameChecker = nameChecker;
             this.accessibilityChecker = accessibilityChecker;
             this.genericParameterChecker = genericParameterChecker;
             this.namespaceChecker = namespaceChecker;
+            this.interfaceChecker = interfaceChecker;
         }
 
         /// <inheritdoc/>
@@ -96,6 +109,11 @@ namespace NameInProgress.Visitors
             }
 
             if (genericParameterChecker != null && (symbol.TypeParameters.Length == 0 || symbol.TypeParameters.Any(type => !genericParameterChecker(type))))
+            {
+                return;
+            }
+
+            if (interfaceChecker?.Invoke(symbol.AllInterfaces.CastArray<ITypeSymbol>()) == false)
             {
                 return;
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Conditions;
 using NameInProgress.Entities;
@@ -31,6 +32,11 @@ namespace NameInProgress.Builders
         /// </summary>
         public Func<ITypeParameterSymbol, bool> GenericParameterChecker { get; set; }
 
+        /// <summary>
+        /// Gets or sets the function used to check interface.
+        /// </summary>
+        public Func<ImmutableArray<ITypeSymbol>, bool> InterfaceChecker { get; set; }
+
         /// <inheritdoc/>
         public IStringCondition<IClassVisitorBuilder> WithName()
         {
@@ -56,6 +62,12 @@ namespace NameInProgress.Builders
         }
 
         /// <inheritdoc/>
-        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker, NamespaceChecker);
+        public ITypeCondition<IClassVisitorBuilder> WithInterface()
+        {
+            return new TypeConditionBuilder<IClassVisitorBuilder>(this, checker => InterfaceChecker = checker);
+        }
+
+        /// <inheritdoc/>
+        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker, NamespaceChecker, InterfaceChecker);
     }
 }
