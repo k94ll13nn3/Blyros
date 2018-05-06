@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -26,7 +27,7 @@ namespace NameInProgress.Visitors
                 // https://github.com/dotnet/roslyn/wiki/Runtime-code-generation-using-Roslyn-compilations-in-.NET-Core-App
                 platformAssemblies = trustedPlatformAssemblies
                     .ToString()
-                    .Split(';')
+                    .Split(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ';' : ':')
                     .Select(x => (MetadataReference)MetadataReference.CreateFromFile(x))
                     .ToList();
             }
