@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using NameInProgress.Builders;
 using NameInProgress.Enums;
@@ -71,6 +72,22 @@ namespace NameInProgress.Tests.Builders
             var builder = new ClassVisitorBuilder().WithNamespace().EqualTo("NameInProgress.Tests.Builders") as ClassVisitorBuilder;
 
             builder.NamespaceChecker("NameInProgress.Tests.Visitors").Should().BeFalse();
+        }
+
+        [Fact]
+        public void WithInterface_WithGoodParameter_ReturnsTrue()
+        {
+            var builder = new ClassVisitorBuilder().WithInterface().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
+
+            builder.InterfaceChecker(ImmutableArray.Create(typeof(ClassVisitorBuilder).GetFakeTypeSymbol())).Should().BeTrue();
+        }
+
+        [Fact]
+        public void WithInterface_WithBadParameter_ReturnsFalse()
+        {
+            var builder = new ClassVisitorBuilder().WithInterface().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
+
+            builder.InterfaceChecker(ImmutableArray.Create(typeof(ClassVisitorBuilderTests).GetFakeTypeSymbol())).Should().BeFalse();
         }
 
         [Fact]

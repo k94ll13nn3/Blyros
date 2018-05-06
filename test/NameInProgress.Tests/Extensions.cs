@@ -10,6 +10,14 @@ namespace NameInProgress.Tests
 {
     public static class Extensions
     {
+        public static ITypeSymbol GetFakeTypeSymbol(this Type type)
+        {
+            ITypeSymbol typeSymbol = A.Fake<ITypeSymbol>();
+            A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(GetStringFromType(type));
+
+            return typeSymbol;
+        }
+
         public static ITypeParameterSymbol GetFakeTypeParameterSymbol(this Type type) => GetFakeTypeParameterSymbolInternal(type);
 
         public static ITypeParameterSymbol GetFakeTypeParameterSymbol(this Type[] types) => GetFakeTypeParameterSymbolInternal(types);
