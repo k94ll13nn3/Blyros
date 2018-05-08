@@ -79,7 +79,7 @@ namespace NameInProgress.Tests.Builders
         {
             var builder = new ClassVisitorBuilder().WithInterface().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
 
-            builder.InterfaceChecker(ImmutableArray.Create(typeof(ClassVisitorBuilder).GetFakeTypeSymbol())).Should().BeTrue();
+            builder.InterfaceChecker(typeof(ClassVisitorBuilder).GetFakeTypeSymbols()).Should().BeTrue();
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace NameInProgress.Tests.Builders
         {
             var builder = new ClassVisitorBuilder().WithInterface().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
 
-            builder.InterfaceChecker(ImmutableArray.Create(typeof(ClassVisitorBuilderTests).GetFakeTypeSymbol())).Should().BeFalse();
+            builder.InterfaceChecker(typeof(ClassVisitorBuilderTests).GetFakeTypeSymbols()).Should().BeFalse();
         }
 
         [Fact]
