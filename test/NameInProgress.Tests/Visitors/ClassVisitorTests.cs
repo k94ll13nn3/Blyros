@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NameInProgress.Builders;
 using NameInProgress.Entities;
 using NameInProgress.Enums;
@@ -80,6 +81,25 @@ namespace NameInProgress.Tests.Visitors
             };
 
             classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithAccessibilityOneOf()
+        {
+            var builder = NameInProgressBuilder
+                .GetClasses()
+                .WithAccessibility().OneOf(MemberAccessibility.Public)
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = typeof(Struct)
+                .Assembly
+                .GetTypes()
+                .Where(t => t.IsClass && t.IsPublic)
+                .Select(t => new ClassEntity { Name = t.Name.Split('`')[0], FullName = t.GetFormattedString() });
+            classes.Should().HaveCount(expected.Count());
             classes.Should().BeEquivalentTo(expected);
         }
 

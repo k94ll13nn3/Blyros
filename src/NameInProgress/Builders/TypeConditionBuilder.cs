@@ -86,9 +86,9 @@ namespace NameInProgress.Builders
         {
             var builder = new StringBuilder();
             builder.Append(type.FullName.Split('`')[0]);
-            if (type.GenericTypeArguments.Any())
+            if (type.GetGenericArguments().Any())
             {
-                builder.Append($"<{string.Join(", ", type.GenericTypeArguments.Select(z => GetStringFromType(z)))}>");
+                builder.Append($"<{string.Join(", ", type.GetGenericArguments().Select(z => GetStringFromType(z)))}>");
             }
 
             return builder.ToString();

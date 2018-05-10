@@ -18,10 +18,27 @@ namespace NameInProgress.Tests
 
         public static ITypeParameterSymbol GetFakeTypeParameterSymbol(this Type[] types) => GetFakeTypeParameterSymbolInternal(types);
 
+        public static string GetFormattedString(this Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            var builder = new StringBuilder();
+            builder.Append((type.FullName ?? type.Name).Split('`')[0]);
+            if (type.GetGenericArguments().Any())
+            {
+                builder.Append($"<{string.Join(", ", type.GetGenericArguments().Select(z => z.GetFormattedString()))}>");
+            }
+
+            return builder.ToString();
+        }
+
         private static ITypeSymbol GetFakeTypeSymbolInternal(this Type type)
         {
             ITypeSymbol typeSymbol = A.Fake<ITypeSymbol>();
-            A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(GetStringFromType(type));
+            A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(type.GetFormattedString());
 
             return typeSymbol;
         }
@@ -32,7 +49,7 @@ namespace NameInProgress.Tests
             foreach (Type type in types)
             {
                 ITypeSymbol typeSymbol = A.Fake<ITypeSymbol>();
-                A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(GetStringFromType(type));
+                A.CallTo(() => typeSymbol.ToDisplayString(A<SymbolDisplayFormat>._)).Returns(type.GetFormattedString());
                 typeSymbols.Add(typeSymbol);
             }
 
@@ -40,23 +57,6 @@ namespace NameInProgress.Tests
             A.CallTo(() => typeParameterSymbol.ConstraintTypes).Returns(typeSymbols.ToImmutableArray());
 
             return typeParameterSymbol;
-        }
-
-        private static string GetStringFromType(Type type)
-        {
-            if (type == null)
-            {
-                return null;
-            }
-
-            var builder = new StringBuilder();
-            builder.Append(type.FullName.Split('`')[0]);
-            if (type.GenericTypeArguments.Any())
-            {
-                builder.Append($"<{string.Join(", ", type.GenericTypeArguments.Select(z => GetStringFromType(z)))}>");
-            }
-
-            return builder.ToString();
         }
     }
 }
