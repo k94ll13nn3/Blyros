@@ -253,8 +253,8 @@ paket-files/
 
 tools/
 _site/
-test/NameInProgress.Tests/Coverage/
-test/NameInProgress.Tests/opencover.4.6.589/
+test/Blyros.Tests/Coverage/
+test/Blyros.Tests/opencover.4.6.589/
 *Coverage*
 TestResult.first.xml
 docs/output/
