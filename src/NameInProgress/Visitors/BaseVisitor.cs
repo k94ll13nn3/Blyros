@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -29,6 +28,7 @@ namespace NameInProgress.Visitors
                 platformAssemblies = trustedPlatformAssemblies
                     .ToString()
                     .Split(Path.PathSeparator)
+                    .Where(t => t.Contains("System.Runtime.dll") || t.Contains("System.Private.CoreLib.dll") || t.Contains("netstandard.dll"))
                     .Select(x => (MetadataReference)MetadataReference.CreateFromFile(x))
                     .ToList();
             }
