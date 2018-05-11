@@ -195,5 +195,24 @@ namespace Blyros.Tests.Visitors
             classes.Should().HaveCount(3);
             classes.Should().BeEquivalentTo(expected);
         }
+
+        [Fact]
+        public void ClassVisitor_WithInterfaceOfType()
+        {
+            var builder = BlyrosBuilder
+                .GetClasses()
+                .WithInterface().OfType<IInterface>()
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassImplementingIInterface", FullName = "Blyros.Tests.Data.ClassImplementingIInterface" },
+            };
+
+            classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
     }
 }
