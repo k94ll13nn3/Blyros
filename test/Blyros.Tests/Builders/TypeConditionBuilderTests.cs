@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using FakeItEasy;
-using FluentAssertions;
-using Microsoft.CodeAnalysis;
+using System.Linq;
 using Blyros.Builders;
 using Blyros.Conditions;
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
 using Xunit;
 
 namespace Blyros.Tests.Builders
@@ -15,21 +14,21 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_AnyType_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .AnyType();
 
-            fakeBuilder.Checker(ImmutableArray.Create<ITypeSymbol>()).Should().BeTrue();
+            fakeBuilder.Checker(Enumerable.Empty<ITypeSymbol>()).Should().BeTrue();
         }
 
         [Fact]
         public void TypeChecker_OfType_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<ITypeCondition<object>>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = typeof(ITypeCondition<object>).GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = typeof(ITypeCondition<object>).GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeTrue();
         }
@@ -39,11 +38,11 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(ITypeSymbol))]
         public void TypeChecker_OfType_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<ITypeCondition<object>>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -51,11 +50,11 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeMultipleTypeToFind_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<ITypeCondition<object>>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = new[] { typeof(ITypeCondition<object>), typeof(IClassVisitorBuilder) }.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = new[] { typeof(ITypeCondition<object>), typeof(IClassVisitorBuilder) }.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeTrue();
         }
@@ -63,11 +62,11 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeWithGeneric_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<IEnumerable<string>>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = typeof(IEnumerable<string>).GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = typeof(IEnumerable<string>).GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeTrue();
         }
@@ -75,11 +74,11 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeWithGeneric_ReturnsFalse()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<IEnumerable<string>>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = typeof(IEnumerable<ITypeCondition<object>>).GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = typeof(IEnumerable<ITypeCondition<object>>).GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -87,11 +86,11 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeWithTuples_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<(int, int)>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = typeof((int, int)).GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = typeof((int, int)).GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeTrue();
         }
@@ -102,11 +101,11 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof((string, int)))]
         public void TypeChecker_OfTypeWithTuples_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType<(int, string)>();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -114,8 +113,8 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeOneOfWithoutParameters_TypeCheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf();
 
@@ -127,12 +126,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeOneOfWithoutParameters_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -140,8 +139,8 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeOneOfWithNullParameters_TypeCheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf(null);
 
@@ -153,12 +152,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeOneOfWithNullParameters_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf(null);
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -169,12 +168,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeOneOf_ReturnsTrue(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf(typeof(ITypeCondition<object>), typeof(TypeConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeTrue();
         }
@@ -184,12 +183,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(ITypeParameterSymbol))]
         public void TypeChecker_OfTypeOneOf_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .OneOf(typeof(ITypeCondition<object>), typeof(TypeConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -197,8 +196,8 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeAllOfWithoutParameters_TypeCheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf();
 
@@ -210,12 +209,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeAllOfWithoutParameters_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf();
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -223,8 +222,8 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeAllOfWithNullParameters_TypeCheckerShouldNotBeNull()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf(null);
 
@@ -236,12 +235,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeAllOfWithNullParameters_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf(null);
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }
@@ -249,12 +248,12 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeAllOf_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf(typeof(ITypeCondition<object>), typeof(TypeConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ImmutableArray<ITypeSymbol> typeSymbols = new[]
+            IEnumerable<ITypeSymbol> typeSymbols = new[]
             {
                 typeof(IEnumerable<string>),
                 typeof(ITypeCondition<object>),
@@ -268,12 +267,12 @@ namespace Blyros.Tests.Builders
         [Fact]
         public void TypeChecker_OfTypeAllOfWithMoreTypes_ReturnsTrue()
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf(typeof(ITypeCondition<object>), typeof(TypeConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ImmutableArray<ITypeSymbol> typeSymbols = new[]
+            IEnumerable<ITypeSymbol> typeSymbols = new[]
             {
                 typeof(IEnumerable<string>),
                 typeof(IEnumerable<DateTime>),
@@ -291,12 +290,12 @@ namespace Blyros.Tests.Builders
         [InlineData(typeof(TypeConditionBuilderTests))]
         public void TypeChecker_OfTypeAllOf_ReturnsFalse(Type type)
         {
-            var fakeBuilder = new FakeBuilder<ImmutableArray<ITypeSymbol>>();
-            (new TypeConditionBuilder<FakeBuilder<ImmutableArray<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
+            var fakeBuilder = new FakeBuilder<IEnumerable<ITypeSymbol>>();
+            (new TypeConditionBuilder<FakeBuilder<IEnumerable<ITypeSymbol>>>(fakeBuilder, _ => fakeBuilder.SetChecker(_)))
                 .OfType()
                 .AllOf(typeof(ITypeCondition<object>), typeof(TypeConditionBuilderTests), typeof(IEnumerable<string>));
 
-            ImmutableArray<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
+            IEnumerable<ITypeSymbol> typeSymbols = type.GetFakeTypeSymbols();
 
             fakeBuilder.Checker(typeSymbols).Should().BeFalse();
         }

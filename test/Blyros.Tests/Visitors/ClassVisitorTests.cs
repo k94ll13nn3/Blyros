@@ -1,9 +1,10 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using System;
+using System.Linq;
 using Blyros.Builders;
 using Blyros.Entities;
 using Blyros.Enums;
 using Blyros.Tests.Data;
+using FluentAssertions;
 using Xunit;
 
 namespace Blyros.Tests.Visitors
@@ -209,6 +210,66 @@ namespace Blyros.Tests.Visitors
             var expected = new[]
             {
                  new ClassEntity { Name = "ClassImplementingIInterface", FullName = "Blyros.Tests.Data.ClassImplementingIInterface" },
+            };
+
+            classes.Should().HaveCount(1);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithAttributeAnyType()
+        {
+            var builder = BlyrosBuilder
+                .GetClasses()
+                .WithAttribute().AnyType()
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "TestAttribute", FullName = "Blyros.Tests.Data.TestAttribute" },
+                 new ClassEntity { Name = "ClassWithAttribute", FullName = "Blyros.Tests.Data.ClassWithAttribute" },
+                 new ClassEntity { Name = "ClassWithAttributes", FullName = "Blyros.Tests.Data.ClassWithAttributes" },
+            };
+
+            classes.Should().HaveCount(3);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithAttributeOfType()
+        {
+            var builder = BlyrosBuilder
+                .GetClasses()
+                .WithAttribute().OfType<TestAttribute>()
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithAttribute", FullName = "Blyros.Tests.Data.ClassWithAttribute" },
+                 new ClassEntity { Name = "ClassWithAttributes", FullName = "Blyros.Tests.Data.ClassWithAttributes" },
+            };
+
+            classes.Should().HaveCount(2);
+            classes.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassVisitor_WithAttributeOfTypeAllOf()
+        {
+            var builder = BlyrosBuilder
+                .GetClasses()
+                .WithAttribute().OfType().AllOf(typeof(ObsoleteAttribute), typeof(TestAttribute))
+                .Build();
+
+            var classes = builder.Execute(typeof(Struct));
+
+            var expected = new[]
+            {
+                 new ClassEntity { Name = "ClassWithAttributes", FullName = "Blyros.Tests.Data.ClassWithAttributes" },
             };
 
             classes.Should().HaveCount(1);

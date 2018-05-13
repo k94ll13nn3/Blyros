@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Blyros.Builders;
+using Blyros.Enums;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
-using Blyros.Builders;
-using Blyros.Enums;
 using Xunit;
 
 namespace Blyros.Tests.Builders

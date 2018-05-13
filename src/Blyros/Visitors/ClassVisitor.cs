@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
 using Blyros.Entities;
+using Microsoft.CodeAnalysis;
 
 namespace Blyros.Visitors
 {
@@ -40,7 +39,12 @@ namespace Blyros.Visitors
         /// <summary>
         /// The interface checking function.
         /// </summary>
-        private Func<ImmutableArray<ITypeSymbol>, bool> interfaceChecker;
+        private Func<IEnumerable<ITypeSymbol>, bool> interfaceChecker;
+
+        /// <summary>
+        /// The attribute checking function.
+        /// </summary>
+        private Func<IEnumerable<ITypeSymbol>, bool> attributeChecker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClassVisitor"/> class.
@@ -50,12 +54,14 @@ namespace Blyros.Visitors
         /// <param name="genericParameterChecker">The name generic parameter function.</param>
         /// <param name="namespaceChecker">The namespace checking function.</param>
         /// <param name="interfaceChecker">The interface checking function.</param>
+        /// <param name="attributeChecker">The attribute checking function.</param>
         public ClassVisitor(
             Func<string, bool> nameChecker,
             Func<Accessibility, bool> accessibilityChecker,
             Func<ITypeParameterSymbol, bool> genericParameterChecker,
             Func<string, bool> namespaceChecker,
-            Func<ImmutableArray<ITypeSymbol>, bool> interfaceChecker)
+            Func<IEnumerable<ITypeSymbol>, bool> interfaceChecker,
+            Func<IEnumerable<ITypeSymbol>, bool> attributeChecker)
         {
             classes = new List<ClassEntity>();
             this.nameChecker = nameChecker;
@@ -63,6 +69,7 @@ namespace Blyros.Visitors
             this.genericParameterChecker = genericParameterChecker;
             this.namespaceChecker = namespaceChecker;
             this.interfaceChecker = interfaceChecker;
+            this.attributeChecker = attributeChecker;
         }
 
         /// <inheritdoc/>
@@ -113,7 +120,12 @@ namespace Blyros.Visitors
                 return;
             }
 
-            if (interfaceChecker?.Invoke(symbol.AllInterfaces.CastArray<ITypeSymbol>()) == false)
+            if (interfaceChecker?.Invoke(symbol.AllInterfaces.Cast<ITypeSymbol>()) == false)
+            {
+                return;
+            }
+
+            if (attributeChecker != null && (symbol.GetAttributes().Length == 0 || attributeChecker(symbol.GetAttributes().Select(a => a.AttributeClass as ITypeSymbol)) == false))
             {
                 return;
             }

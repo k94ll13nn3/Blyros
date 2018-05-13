@@ -1,7 +1,7 @@
-﻿using FakeItEasy;
+﻿using Blyros.Visitors;
+using FakeItEasy;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
-using Blyros.Visitors;
 using Xunit;
 
 namespace Blyros.Tests.Visitors

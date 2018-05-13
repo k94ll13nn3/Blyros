@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using FakeItEasy;
+using Blyros.Builders;
+using Blyros.Enums;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
-using Blyros.Builders;
-using Blyros.Conditions;
-using Blyros.Enums;
 using Xunit;
 
 namespace Blyros.Tests.Builders

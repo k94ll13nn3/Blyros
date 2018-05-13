@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using Blyros.Conditions;
 using Blyros.Entities;
 using Blyros.Visitors;
+using Microsoft.CodeAnalysis;
 
 namespace Blyros.Builders
 {
@@ -35,7 +35,12 @@ namespace Blyros.Builders
         /// <summary>
         /// Gets or sets the function used to check interface.
         /// </summary>
-        public Func<ImmutableArray<ITypeSymbol>, bool> InterfaceChecker { get; set; }
+        public Func<IEnumerable<ITypeSymbol>, bool> InterfaceChecker { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function used to check attributes.
+        /// </summary>
+        public Func<IEnumerable<ITypeSymbol>, bool> AttributeChecker { get; set; }
 
         /// <inheritdoc/>
         public IStringCondition<IClassVisitorBuilder> WithName()
@@ -68,6 +73,12 @@ namespace Blyros.Builders
         }
 
         /// <inheritdoc/>
-        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker, NamespaceChecker, InterfaceChecker);
+        public ITypeCondition<IClassVisitorBuilder> WithAttribute()
+        {
+            return new TypeConditionBuilder<IClassVisitorBuilder>(this, checker => AttributeChecker = checker);
+        }
+
+        /// <inheritdoc/>
+        public IVisitor<ClassEntity> Build() => new ClassVisitor(NameChecker, AccessibilityChecker, GenericParameterChecker, NamespaceChecker, InterfaceChecker, AttributeChecker);
     }
 }

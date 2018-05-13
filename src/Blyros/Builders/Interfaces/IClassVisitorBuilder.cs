@@ -44,5 +44,11 @@ namespace Blyros.Builders
         /// </summary>
         /// <returns>The builder.</returns>
         ITypeCondition<IClassVisitorBuilder> WithInterface();
+
+        /// <summary>
+        /// Returns a builder for building a condition on attributes.
+        /// </summary>
+        /// <returns>The builder.</returns>
+        ITypeCondition<IClassVisitorBuilder> WithAttribute();
     }
 }

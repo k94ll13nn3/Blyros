@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using Blyros.Builders;
+﻿using Blyros.Builders;
+using FluentAssertions;
 using Xunit;
 
 namespace Blyros.Tests.Builders

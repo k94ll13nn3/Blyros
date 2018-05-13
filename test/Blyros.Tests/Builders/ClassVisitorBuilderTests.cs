@@ -1,9 +1,8 @@
-﻿using System.Collections.Immutable;
-using FluentAssertions;
-using Microsoft.CodeAnalysis;
-using Blyros.Builders;
+﻿using Blyros.Builders;
 using Blyros.Enums;
 using Blyros.Visitors;
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
 using Xunit;
 
 namespace Blyros.Tests.Builders
@@ -88,6 +87,22 @@ namespace Blyros.Tests.Builders
             var builder = new ClassVisitorBuilder().WithInterface().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
 
             builder.InterfaceChecker(typeof(ClassVisitorBuilderTests).GetFakeTypeSymbols()).Should().BeFalse();
+        }
+
+        [Fact]
+        public void WithAttribute_WithGoodParameter_ReturnsTrue()
+        {
+            var builder = new ClassVisitorBuilder().WithAttribute().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
+
+            builder.AttributeChecker(typeof(ClassVisitorBuilder).GetFakeTypeSymbols()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void WithAttribute_WithBadParameter_ReturnsFalse()
+        {
+            var builder = new ClassVisitorBuilder().WithAttribute().OfType<ClassVisitorBuilder>() as ClassVisitorBuilder;
+
+            builder.AttributeChecker(typeof(ClassVisitorBuilderTests).GetFakeTypeSymbols()).Should().BeFalse();
         }
 
         [Fact]

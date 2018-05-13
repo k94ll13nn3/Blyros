@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Microsoft.CodeAnalysis;
 using Blyros.Conditions;
+using Microsoft.CodeAnalysis;
 
 namespace Blyros.Builders
 {
@@ -19,7 +19,7 @@ namespace Blyros.Builders
         /// <summary>
         /// The action to call to set the checher.
         /// </summary>
-        protected Action<Func<ImmutableArray<ITypeSymbol>, bool>> setChecker;
+        protected Action<Func<IEnumerable<ITypeSymbol>, bool>> setChecker;
 
         /// <summary>
         /// The visitor that will use the condition.
@@ -38,7 +38,7 @@ namespace Blyros.Builders
         /// </summary>
         /// <param name="visitor">The visitor that will use the condition.</param>
         /// <param name="setChecker">The action to call to set the checher.</param>
-        public TypeConditionBuilder(TBuilder visitor, Action<Func<ImmutableArray<ITypeSymbol>, bool>> setChecker)
+        public TypeConditionBuilder(TBuilder visitor, Action<Func<IEnumerable<ITypeSymbol>, bool>> setChecker)
         {
             this.visitor = visitor;
             this.setChecker = setChecker;
