@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -13,18 +12,23 @@ namespace Blyros
     /// </summary>
     public class BlyrosSymbolVisitor : SymbolVisitor<IEnumerable<ISymbol>>
     {
-        private readonly BlyrosSymbolVisitorOptions options;
+        /// <summary>
+        /// The options used by the visitor.
+        /// </summary>
+        private BlyrosSymbolVisitorOptions options = BlyrosSymbolVisitorOptions.Default;
 
-        public BlyrosSymbolVisitor() 
-            : this(null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlyrosSymbolVisitor"/> class.
+        /// </summary>
+        private BlyrosSymbolVisitor()
         {
-
         }
 
-        public BlyrosSymbolVisitor(BlyrosSymbolVisitorOptions options)
-        {
-            this.options = options;
-        }
+        /// <summary>
+        /// Creates a new <see cref="BlyrosSymbolVisitor"/>.
+        /// </summary>
+        /// <returns>A new <see cref="BlyrosSymbolVisitor"/>.</returns>
+        public static BlyrosSymbolVisitor Create() => new BlyrosSymbolVisitor();
 
         /// <inheritdoc/>
         public override IEnumerable<ISymbol> DefaultVisit(ISymbol symbol)
@@ -32,10 +36,11 @@ namespace Blyros
             var symbols = new List<ISymbol> { symbol };
             if (symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol)
             {
-                foreach (var child in namespaceOrTypeSymbol.GetMembers())
-                {
-                    symbols.AddRange(child.Accept(this));
-                }
+                ParallelQuery<ISymbol> collection = namespaceOrTypeSymbol
+                    .GetMembers()
+                    .AsParallel()
+                    .SelectMany(child => child.Accept(this));
+                symbols.AddRange(collection);
             }
 
             return symbols;
@@ -47,13 +52,15 @@ namespace Blyros
             return symbol.GlobalNamespace.Accept(this);
         }
 
+        public IEnumerable<ISymbol> Execute(Type type) => Execute(type.Assembly.Location);
+
         public IEnumerable<ISymbol> Execute(string path)
         {
             MetadataReference testedAssembly = MetadataReference.CreateFromFile(path);
 
             // TODO: test other platforms (like Mono) to see what is needed.
             IList<MetadataReference> platformAssemblies;
-            var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
+            object trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
             if (trustedPlatformAssemblies != null)
             {
                 // .NET Core App need this for resolving types.
@@ -83,6 +90,15 @@ namespace Blyros
             return Visit(compilation.GetAssemblyOrModuleSymbol(testedAssembly));
         }
 
-        public IEnumerable<ISymbol> Execute(Type type) => Execute(type.Assembly.Location);
+        /// <summary>
+        /// Updates the calling instance to use the specified options.
+        /// </summary>
+        /// <param name="options">The options to use.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithOptions(BlyrosSymbolVisitorOptions options)
+        {
+            this.options = options;
+            return this;
+        }
     }
 }
