@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 15.0.26124.0
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blyros.Runner", "src\Blyros.Runner\Blyros.Runner.csproj", "{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,12 +23,17 @@ Global
 		{4B1FB0A0-C4CC-4F5D-8920-0F2FA51A216D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B1FB0A0-C4CC-4F5D-8920-0F2FA51A216D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B1FB0A0-C4CC-4F5D-8920-0F2FA51A216D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4B1FB0A0-C4CC-4F5D-8920-0F2FA51A216D} = {27F17D14-4E0C-4C74-9CEB-F3819D9BE230}
+		{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260} = {27F17D14-4E0C-4C74-9CEB-F3819D9BE230}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51BC5A0E-46AF-4A78-8BEC-CB18A98559AA}
