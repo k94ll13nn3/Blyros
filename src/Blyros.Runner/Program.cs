@@ -11,7 +11,7 @@ namespace Blyros.Runner
             IEnumerable<ISymbol> symbols = BlyrosSymbolVisitor
                 .Create()
                 .WithOptions(BlyrosSymbolVisitorOptions.Default)
-                .Execute(typeof(BlyrosSymbolVisitor));
+                .Execute(typeof(Program));
             foreach (ISymbol symbol in symbols)
             {
                 Console.WriteLine($"{symbol.ToDisplayString()}");

@@ -33,7 +33,12 @@ namespace Blyros
         /// <inheritdoc/>
         public override IEnumerable<ISymbol> DefaultVisit(ISymbol symbol)
         {
-            var symbols = new List<ISymbol> { symbol };
+            var symbols = new List<ISymbol>();
+            if (IsSymbolWanted(symbol))
+            {
+                symbols.Add(symbol);
+            }
+
             if (symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol)
             {
                 ParallelQuery<ISymbol> collection = namespaceOrTypeSymbol
@@ -50,6 +55,21 @@ namespace Blyros
         public override IEnumerable<ISymbol> VisitAssembly(IAssemblySymbol symbol)
         {
             return symbol.GlobalNamespace.Accept(this);
+        }
+
+        public bool IsSymbolWanted(ISymbol symbol)
+        {
+            string symbolAsString = symbol.ToString();
+
+            // Do note take "<global namespace>" and "<Module>"
+            bool result = !symbolAsString.StartsWith("<") || !symbolAsString.EndsWith(">");
+
+            if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
+            {
+                result = options.GetClasses;
+            }
+
+            return result;
         }
 
         public IEnumerable<ISymbol> Execute(Type type) => Execute(type.Assembly.Location);
