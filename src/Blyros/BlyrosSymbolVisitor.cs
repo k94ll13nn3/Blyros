@@ -18,6 +18,11 @@ namespace Blyros
         private BlyrosSymbolVisitorOptions options = BlyrosSymbolVisitorOptions.Default;
 
         /// <summary>
+        /// The filter to use on namespaces.
+        /// </summary>
+        private Func<INamespaceSymbol, bool> namespaceFilter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BlyrosSymbolVisitor"/> class.
         /// </summary>
         private BlyrosSymbolVisitor()
@@ -30,46 +35,26 @@ namespace Blyros
         /// <returns>A new <see cref="BlyrosSymbolVisitor"/>.</returns>
         public static BlyrosSymbolVisitor Create() => new BlyrosSymbolVisitor();
 
-        /// <inheritdoc/>
-        public override IEnumerable<ISymbol> DefaultVisit(ISymbol symbol)
+        /// <summary>
+        /// Updates the calling instance to use the specified options.
+        /// </summary>
+        /// <param name="options">The options to use.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithOptions(BlyrosSymbolVisitorOptions options)
         {
-            var symbols = new List<ISymbol>();
-            if (IsSymbolWanted(symbol))
-            {
-                symbols.Add(symbol);
-            }
-
-            if (symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol)
-            {
-                ParallelQuery<ISymbol> collection = namespaceOrTypeSymbol
-                    .GetMembers()
-                    .AsParallel()
-                    .SelectMany(child => child.Accept(this));
-                symbols.AddRange(collection);
-            }
-
-            return symbols;
+            this.options = options;
+            return this;
         }
 
-        /// <inheritdoc/>
-        public override IEnumerable<ISymbol> VisitAssembly(IAssemblySymbol symbol)
+        /// <summary>
+        /// Updates the calling instance to use the specified namespace filter.
+        /// </summary>
+        /// <param name="namespaceFilter">The filter to use on namespaces.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithNamespaceFilter(Func<INamespaceSymbol, bool> namespaceFilter)
         {
-            return symbol.GlobalNamespace.Accept(this);
-        }
-
-        public bool IsSymbolWanted(ISymbol symbol)
-        {
-            string symbolAsString = symbol.ToString();
-
-            // Do note take "<global namespace>" and "<Module>"
-            bool result = !symbolAsString.StartsWith("<") || !symbolAsString.EndsWith(">");
-
-            if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
-            {
-                result = options.GetClasses;
-            }
-
-            return result;
+            this.namespaceFilter = namespaceFilter;
+            return this;
         }
 
         public IEnumerable<ISymbol> Execute(Type type) => Execute(type.Assembly.Location);
@@ -110,15 +95,57 @@ namespace Blyros
             return Visit(compilation.GetAssemblyOrModuleSymbol(testedAssembly));
         }
 
-        /// <summary>
-        /// Updates the calling instance to use the specified options.
-        /// </summary>
-        /// <param name="options">The options to use.</param>
-        /// <returns>The calling instance updated.</returns>
-        public BlyrosSymbolVisitor WithOptions(BlyrosSymbolVisitorOptions options)
+        /// <inheritdoc/>
+        public override IEnumerable<ISymbol> DefaultVisit(ISymbol symbol)
         {
-            this.options = options;
-            return this;
+            // Do not visit compiler generated symbols.
+            if (symbol.IsCompilerGeneratedSymbol())
+            {
+                return Enumerable.Empty<ISymbol>();
+            }
+
+            var symbols = new List<ISymbol>();
+            if (IsSymbolWanted(symbol))
+            {
+                symbols.Add(symbol);
+            }
+
+            if (symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol)
+            {
+                ParallelQuery<ISymbol> collection = namespaceOrTypeSymbol
+                    .GetMembers()
+                    .AsParallel()
+                    .SelectMany(child => child.Accept(this));
+                symbols.AddRange(collection);
+            }
+
+            return symbols;
+        }
+
+        /// <inheritdoc/>
+        public override IEnumerable<ISymbol> VisitAssembly(IAssemblySymbol symbol)
+        {
+            return symbol.GlobalNamespace.Accept(this);
+        }
+
+        public bool IsSymbolWanted(ISymbol symbol)
+        {
+            string symbolAsString = symbol.ToString();
+
+            // Do note take "<global namespace>" and "<Module>"
+            bool result = !symbolAsString.StartsWith("<") || !symbolAsString.EndsWith(">");
+
+            if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
+            {
+                result = options.GetClasses;
+            }
+
+            if (result && namespaceFilter != null)
+            {
+                result = namespaceFilter(symbol.ContainingNamespace);
+            }
+
+            return result;
         }
     }
 }
