@@ -1,5 +1,5 @@
 # EditorConfig is awesome:http://EditorConfig.org
-# Forked from https://github.com/dotnet/project-system/blob/b4484a9aea32c123cb4414e6cd91a5462fa0a35f/.editorconfig
+# Forked from https://github.com/dotnet/project-system/blob/481028b4c0de09d9a610f9a0ff22c019d5a49c2f/.editorconfig
 
 # top-most EditorConfig file
 root = true
@@ -10,13 +10,13 @@ indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
-[*.{cs,csx}]
+[*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
 
 # Xml project files
-[*.{csproj}]
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
 
 # Xml config files
@@ -24,7 +24,7 @@ indent_size = 2
 indent_size = 2
 
 # Dotnet code style settings:
-[*.{cs}]
+[*.{cs,vb}]
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 dotnet_style_require_accessibility_modifiers = always:warning
@@ -62,6 +62,10 @@ dotnet_naming_rule.constants_must_be_pascal_cased.symbols                       
 dotnet_naming_rule.constants_must_be_pascal_cased.style                                               = pascal_case_style
 dotnet_naming_rule.constants_must_be_pascal_cased.severity                                            = warning
 
+dotnet_naming_rule.private_static_readonly_fields_must_be_camel_cased.symbols                         = private_static_readonly_field_symbols
+dotnet_naming_rule.private_static_readonly_fields_must_be_camel_cased.style                           = pascal_case_style
+dotnet_naming_rule.private_static_readonly_fields_must_be_camel_cased.severity                        = warning
+
 dotnet_naming_rule.private_static_fields_must_be_camel_cased.symbols                                  = private_static_field_symbols
 dotnet_naming_rule.private_static_fields_must_be_camel_cased.style                                    = camel_case_style
 dotnet_naming_rule.private_static_fields_must_be_camel_cased.severity                                 = warning
@@ -87,6 +91,10 @@ dotnet_naming_symbols.constant_symbols.applicable_accessibilities               
 dotnet_naming_symbols.private_static_field_symbols.applicable_kinds                                   = field
 dotnet_naming_symbols.private_static_field_symbols.required_modifiers                                 = static,shared
 dotnet_naming_symbols.private_static_field_symbols.applicable_accessibilities                         = private
+
+dotnet_naming_symbols.private_static_readonly_field_symbols.applicable_kinds                          = field
+dotnet_naming_symbols.private_static_readonly_field_symbols.required_modifiers                        = static,shared,readonly
+dotnet_naming_symbols.private_static_readonly_field_symbols.applicable_accessibilities                = private
 
 dotnet_naming_symbols.private_field_symbols.applicable_kinds                                          = field
 dotnet_naming_symbols.private_field_symbols.applicable_accessibilities                                = private
@@ -181,6 +189,9 @@ csharp_space_after_semicolon_in_for_statement = true
 # Wrapping
 csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
+
+# Code block
+csharp_prefer_braces = true:none
 
 [test/**/*.cs]
 # Allow usage of "var" inside tests as it reduces churn as we remove/rename types
