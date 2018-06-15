@@ -119,6 +119,15 @@ namespace Blyros
                 symbols.AddRange(collection);
             }
 
+            if (symbol is IMethodSymbol methodSymbol)
+            {
+                ParallelQuery<ISymbol> collection = methodSymbol
+                    .Parameters
+                    .AsParallel()
+                    .SelectMany(child => child.Accept(this));
+                symbols.AddRange(collection);
+            }
+
             return symbols;
         }
 
@@ -132,12 +141,17 @@ namespace Blyros
         {
             string symbolAsString = symbol.ToString();
 
-            // Do note take "<global namespace>" and "<Module>"
+            // Do note take "<global namespace>" and "<Module>" and others (if there is any...).
             bool result = !symbolAsString.StartsWith("<") || !symbolAsString.EndsWith(">");
 
             if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
             {
                 result = options.GetClasses;
+            }
+
+            if (result && symbol is IMethodSymbol)
+            {
+                result = options.GetMethods;
             }
 
             if (result && namespaceFilter != null)
