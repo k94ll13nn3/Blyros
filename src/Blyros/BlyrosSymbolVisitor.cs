@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using Blyros.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace Blyros
 {
@@ -23,16 +22,16 @@ namespace Blyros
         private Func<INamespaceSymbol, bool> namespaceFilter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BlyrosSymbolVisitor"/> class.
+        /// Prevents creation of new instance outside this class.
         /// </summary>
         private BlyrosSymbolVisitor()
         {
         }
 
         /// <summary>
-        /// Creates a new <see cref="BlyrosSymbolVisitor"/>.
+        /// Initializes a new instance of the <see cref="BlyrosSymbolVisitor"/> class.
         /// </summary>
-        /// <returns>A new <see cref="BlyrosSymbolVisitor"/>.</returns>
+        /// <returns>A new instance of the <see cref="BlyrosSymbolVisitor"/> class.</returns>
         public static BlyrosSymbolVisitor Create() => new BlyrosSymbolVisitor();
 
         /// <summary>
@@ -57,55 +56,16 @@ namespace Blyros
             return this;
         }
 
-        public IEnumerable<ISymbol> Execute(Type type) => Execute(type.Assembly.Location);
-
-        public IEnumerable<ISymbol> Execute(string path)
-        {
-            MetadataReference testedAssembly = MetadataReference.CreateFromFile(path);
-
-            // TODO: test other platforms (like Mono) to see what is needed.
-            IList<MetadataReference> platformAssemblies;
-            object trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-            if (trustedPlatformAssemblies != null)
-            {
-                // .NET Core App need this for resolving types.
-                // TODO: see if all assemblies are needed.
-                // https://github.com/dotnet/roslyn/wiki/Runtime-code-generation-using-Roslyn-compilations-in-.NET-Core-App
-                platformAssemblies = trustedPlatformAssemblies
-                    .ToString()
-                    .Split(Path.PathSeparator)
-                    //.Where(t => t.Contains("System.Runtime.dll") || t.Contains("System.Private.CoreLib.dll") || t.Contains("netstandard.dll"))
-                    .Select(x => (MetadataReference)MetadataReference.CreateFromFile(x))
-                    .ToList();
-            }
-            else
-            {
-                // .NET Framework
-                MetadataReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-                platformAssemblies = new List<MetadataReference> { mscorlib };
-            }
-
-            platformAssemblies.Add(testedAssembly);
-
-            Compilation compilation = CSharpCompilation
-                .Create(nameof(BlyrosSymbolVisitor))
-                .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithMetadataImportOptions(MetadataImportOptions.All))
-                .WithReferences(platformAssemblies);
-
-            return Visit(compilation.GetAssemblyOrModuleSymbol(testedAssembly));
-        }
-
         /// <inheritdoc/>
         public override IEnumerable<ISymbol> DefaultVisit(ISymbol symbol)
         {
-            // Do not visit compiler generated symbols.
-            if (symbol.IsCompilerGeneratedSymbol())
+            if (!symbol.IsSpecial() && !CanSymbolBeVisited(symbol))
             {
                 return Enumerable.Empty<ISymbol>();
             }
 
             var symbols = new List<ISymbol>();
-            if (IsSymbolWanted(symbol))
+            if (!symbol.IsSpecial() && IsSymbolWanted(symbol))
             {
                 symbols.Add(symbol);
             }
@@ -137,12 +97,15 @@ namespace Blyros
             return symbol.GlobalNamespace.Accept(this);
         }
 
-        public bool IsSymbolWanted(ISymbol symbol)
+        /// <summary>
+        /// Determines whether an <see cref="ISymbol"/> must be visited.
+        /// </summary>
+        /// <param name="symbol">The symbol to visit.</param>
+        /// <returns>A value indicating whether the <see cref="ISymbol"/> must be visited.</returns>
+        private bool CanSymbolBeVisited(ISymbol symbol)
         {
-            string symbolAsString = symbol.ToString();
-
-            // Do note take "<global namespace>" and "<Module>" and others (if there is any...).
-            bool result = !symbolAsString.StartsWith("<") || !symbolAsString.EndsWith(">");
+            // Do not visit compiler generated symbols.
+            bool result = !symbol.IsCompilerGenerated();
 
             if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
             {
@@ -154,9 +117,23 @@ namespace Blyros
                 result = options.GetMethods;
             }
 
+            return result;
+        }
+
+        /// <summary>
+        /// Determines whether an <see cref="ISymbol"/> will be returned.
+        /// </summary>
+        /// <param name="symbol">The symbol to return.</param>
+        /// <returns>A value indicating whether the <see cref="ISymbol"/> will be returned.</returns>
+        private bool IsSymbolWanted(ISymbol symbol)
+        {
+            bool result = true;
+
             if (result && namespaceFilter != null)
             {
-                result = namespaceFilter(symbol.ContainingNamespace);
+                result = symbol is INamespaceSymbol namespaceSymbol
+                    ? namespaceFilter(namespaceSymbol)
+                    : namespaceFilter(symbol.ContainingNamespace);
             }
 
             return result;

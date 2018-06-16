@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Blyros.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Blyros.Runner
@@ -43,10 +43,14 @@ namespace Blyros.Runner
         {
             IEnumerable<ISymbol> symbols = BlyrosSymbolVisitor
                 .Create()
-                .WithOptions(BlyrosSymbolVisitorOptions.Default)
+                .WithOptions(new BlyrosSymbolVisitorOptions
+                {
+                    GetClasses = true,
+                    GetMethods = false,
+                })
                 .WithNamespaceFilter(n => n.ToString().Contains("Blyros"))
-                .Execute(typeof(BlyrosSymbolVisitor));
-            foreach (ISymbol symbol in symbols.Take(5))
+                .Visit(typeof(BlyrosSymbolVisitor));
+            foreach (ISymbol symbol in symbols)
             {
                 Console.WriteLine($"{symbol.ToDisplayString(FullSymbolDisplayFormat)}");
             }

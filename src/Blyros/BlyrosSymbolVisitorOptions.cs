@@ -8,8 +8,8 @@
             GetMethods = true,
         };
 
-        public bool GetClasses { get; set; }
+        public bool GetClasses { get; set; } = true;
 
-        public bool GetMethods { get; set; }
+        public bool GetMethods { get; set; } = true;
     }
 }
