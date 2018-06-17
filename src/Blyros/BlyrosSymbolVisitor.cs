@@ -88,6 +88,15 @@ namespace Blyros
                 symbols.AddRange(collection);
             }
 
+            if (symbol is INamedTypeSymbol namedTypeSymbol)
+            {
+                ParallelQuery<ISymbol> collection = namedTypeSymbol
+                    .TypeParameters
+                    .AsParallel()
+                    .SelectMany(child => child.Accept(this));
+                symbols.AddRange(collection);
+            }
+
             return symbols;
         }
 
