@@ -43,11 +43,7 @@ namespace Blyros.Runner
         {
             IEnumerable<ISymbol> symbols = BlyrosSymbolVisitor
                 .Create()
-                .WithOptions(new BlyrosSymbolVisitorOptions
-                {
-                    GetClasses = true,
-                    GetMethods = false,
-                })
+                .WithOptions(BlyrosSymbolVisitorOptions.Default)
                 .WithNamespaceFilter(n => n.ToString().Contains("Blyros"))
                 .Visit(typeof(BlyrosSymbolVisitor));
             foreach (ISymbol symbol in symbols)
