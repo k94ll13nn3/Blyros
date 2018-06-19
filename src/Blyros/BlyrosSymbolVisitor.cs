@@ -22,6 +22,11 @@ namespace Blyros
         private Func<INamespaceSymbol, bool> namespaceFilter;
 
         /// <summary>
+        /// The filter to use on methods.
+        /// </summary>
+        private Func<IMethodSymbol, bool> methodFilter;
+
+        /// <summary>
         /// Prevents creation of new instance outside this class.
         /// </summary>
         private BlyrosSymbolVisitor()
@@ -53,6 +58,17 @@ namespace Blyros
         public BlyrosSymbolVisitor WithNamespaceFilter(Func<INamespaceSymbol, bool> namespaceFilter)
         {
             this.namespaceFilter = namespaceFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified method filter.
+        /// </summary>
+        /// <param name="methodFilter">The filter to use on methods.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithMethodFilter(Func<IMethodSymbol, bool> methodFilter)
+        {
+            this.methodFilter = methodFilter;
             return this;
         }
 
@@ -114,16 +130,44 @@ namespace Blyros
         private bool CanSymbolBeVisited(ISymbol symbol)
         {
             // Do not visit compiler generated symbols.
-            bool result = !symbol.IsCompilerGenerated();
-
-            if (result && symbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Class)
+            if (symbol.IsCompilerGenerated())
             {
-                result = options.GetClasses;
+                return false;
             }
 
-            if (result && symbol is IMethodSymbol)
+            bool result = true;
+
+            if (result && methodFilter != null && symbol is IMethodSymbol methodSymbol)
             {
-                result = options.GetMethods;
+                result = methodFilter(methodSymbol);
+            }
+
+            if (result)
+            {
+                VisitorDepth depth = options.GetVisitorDepth();
+                switch (symbol)
+                {
+                    case INamespaceSymbol _:
+                        result = depth >= VisitorDepth.Namespace;
+                        break;
+
+                    case INamedTypeSymbol _:
+                        result = depth >= VisitorDepth.NamedType;
+                        break;
+
+                    case IMethodSymbol _:
+                    case IPropertySymbol _:
+                    case IFieldSymbol _:
+                        result = depth >= VisitorDepth.Members;
+                        break;
+
+                    case IParameterSymbol _:
+                        result = depth >= VisitorDepth.Parameters;
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
             return result;
@@ -137,7 +181,56 @@ namespace Blyros
         private bool IsSymbolWanted(ISymbol symbol)
         {
             bool result = true;
+            switch (symbol)
+            {
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Class:
+                    result = options.GetClasses;
+                    break;
 
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Struct:
+                    result = options.GetStructs;
+                    break;
+
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Enum:
+                    result = options.GetEnums;
+                    break;
+
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Interface:
+                    result = options.GetInterfaces;
+                    break;
+
+                case IMethodSymbol _:
+                    result = options.GetMethods;
+                    break;
+
+                case IParameterSymbol _:
+                    result = options.GetParameters;
+                    break;
+
+                case IPropertySymbol _:
+                    result = options.GetProperties;
+                    break;
+
+                case IFieldSymbol _:
+                    result = options.GetFields;
+                    break;
+
+                case INamespaceSymbol _:
+                    result = options.GetNamespaces;
+                    break;
+
+                case ITypeParameterSymbol _:
+                    result = options.GetTypeParameters;
+                    break;
+
+                default:
+                    break;
+            }
+
+            // The namespaceFilter cannot be used to prevent the visitor to visit because 
+            // some INamespaceSymbol won't match when using the '.' 
+            // Ex: if the match is "Blyros.", the fist INamespaceSymbol will be "Blyros" (because how namespaces works),
+            // and it won't match.
             if (result && namespaceFilter != null)
             {
                 result = symbol is INamespaceSymbol namespaceSymbol
