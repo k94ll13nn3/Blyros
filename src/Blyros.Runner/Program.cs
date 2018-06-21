@@ -45,10 +45,11 @@ namespace Blyros.Runner
                 .Create()
                 .WithOptions(new BlyrosSymbolVisitorOptions
                 {
-                    GetClasses = true,
+                    GetParameters = true,
+                    GetMethods = true,
                 })
-                .WithNamespaceFilter(n => n.ToString().Contains("Blyros."))
-                .WithMethodFilter(m => m.DeclaredAccessibility == Accessibility.Public)
+                .WithMethodFilter(m => m.IsExtensionMethod)
+                .WithParameterFilter(p => p.Name == "symbolVisitor")
                 .Visit(typeof(BlyrosSymbolVisitor));
             foreach (ISymbol symbol in symbols)
             {

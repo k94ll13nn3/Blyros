@@ -27,6 +27,46 @@ namespace Blyros
         private Func<IMethodSymbol, bool> methodFilter;
 
         /// <summary>
+        /// The filter to use on classes.
+        /// </summary>
+        private Func<INamedTypeSymbol, bool> classFilter;
+
+        /// <summary>
+        /// The filter to use on parameters.
+        /// </summary>
+        private Func<IParameterSymbol, bool> parameterFilter;
+
+        /// <summary>
+        /// The filter to use on properties.
+        /// </summary>
+        private Func<IPropertySymbol, bool> propertyFilter;
+
+        /// <summary>
+        /// The filter to use on fields.
+        /// </summary>
+        private Func<IFieldSymbol, bool> fieldFilter;
+
+        /// <summary>
+        /// The filter to use on interfaces.
+        /// </summary>
+        private Func<INamedTypeSymbol, bool> interfaceFilter;
+
+        /// <summary>
+        /// The filter to use on structs.
+        /// </summary>
+        private Func<INamedTypeSymbol, bool> structFilter;
+
+        /// <summary>
+        /// The filter to use on enums.
+        /// </summary>
+        private Func<INamedTypeSymbol, bool> enumFilter;
+
+        /// <summary>
+        /// The filter to use on typeParameters.
+        /// </summary>
+        private Func<ITypeParameterSymbol, bool> typeParameterFilter;
+
+        /// <summary>
         /// Prevents creation of new instance outside this class.
         /// </summary>
         private BlyrosSymbolVisitor()
@@ -38,6 +78,94 @@ namespace Blyros
         /// </summary>
         /// <returns>A new instance of the <see cref="BlyrosSymbolVisitor"/> class.</returns>
         public static BlyrosSymbolVisitor Create() => new BlyrosSymbolVisitor();
+
+        /// <summary>
+        /// Updates the calling instance to use the specified class filter.
+        /// </summary>
+        /// <param name="classFilter">The filter to use on classes.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithClassFilter(Func<INamedTypeSymbol, bool> classFilter)
+        {
+            this.classFilter = classFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified parameter filter.
+        /// </summary>
+        /// <param name="parameterFilter">The filter to use on parameters.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithParameterFilter(Func<IParameterSymbol, bool> parameterFilter)
+        {
+            this.parameterFilter = parameterFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified property filter.
+        /// </summary>
+        /// <param name="propertyFilter">The filter to use on properties.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithPropertyFilter(Func<IPropertySymbol, bool> propertyFilter)
+        {
+            this.propertyFilter = propertyFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified field filter.
+        /// </summary>
+        /// <param name="fieldFilter">The filter to use on fields.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithFieldFilter(Func<IFieldSymbol, bool> fieldFilter)
+        {
+            this.fieldFilter = fieldFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified interface filter.
+        /// </summary>
+        /// <param name="interfaceFilter">The filter to use on interfaces.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithInterfaceFilter(Func<INamedTypeSymbol, bool> interfaceFilter)
+        {
+            this.interfaceFilter = interfaceFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified struct filter.
+        /// </summary>
+        /// <param name="structFilter">The filter to use on structs.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithStructFilter(Func<INamedTypeSymbol, bool> structFilter)
+        {
+            this.structFilter = structFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified enum filter.
+        /// </summary>
+        /// <param name="enumFilter">The filter to use on enums.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithEnumFilter(Func<INamedTypeSymbol, bool> enumFilter)
+        {
+            this.enumFilter = enumFilter;
+            return this;
+        }
+
+        /// <summary>
+        /// Updates the calling instance to use the specified typeParameter filter.
+        /// </summary>
+        /// <param name="typeParameterFilter">The filter to use on typeParameters.</param>
+        /// <returns>The calling instance updated.</returns>
+        public BlyrosSymbolVisitor WithTypeparameterFilter(Func<ITypeParameterSymbol, bool> typeParameterFilter)
+        {
+            this.typeParameterFilter = typeParameterFilter;
+            return this;
+        }
 
         /// <summary>
         /// Updates the calling instance to use the specified options.
@@ -136,38 +264,48 @@ namespace Blyros
             }
 
             bool result = true;
-
-            if (result && methodFilter != null && symbol is IMethodSymbol methodSymbol)
+            VisitorDepth depth = options.GetVisitorDepth();
+            switch (symbol)
             {
-                result = methodFilter(methodSymbol);
-            }
+                case INamespaceSymbol _:
+                    result = depth >= VisitorDepth.Namespace;
+                    break;
 
-            if (result)
-            {
-                VisitorDepth depth = options.GetVisitorDepth();
-                switch (symbol)
-                {
-                    case INamespaceSymbol _:
-                        result = depth >= VisitorDepth.Namespace;
-                        break;
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Class:
+                    result = depth >= VisitorDepth.NamedType && classFilter?.Invoke(namedTypeSymbol) != false;
+                    break;
 
-                    case INamedTypeSymbol _:
-                        result = depth >= VisitorDepth.NamedType;
-                        break;
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Struct:
+                    result = depth >= VisitorDepth.NamedType && structFilter?.Invoke(namedTypeSymbol) != false;
+                    break;
 
-                    case IMethodSymbol _:
-                    case IPropertySymbol _:
-                    case IFieldSymbol _:
-                        result = depth >= VisitorDepth.Members;
-                        break;
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Enum:
+                    result = depth >= VisitorDepth.NamedType && enumFilter?.Invoke(namedTypeSymbol) != false;
+                    break;
 
-                    case IParameterSymbol _:
-                        result = depth >= VisitorDepth.Parameters;
-                        break;
+                case INamedTypeSymbol namedTypeSymbol when namedTypeSymbol.TypeKind == TypeKind.Interface:
+                    result = depth >= VisitorDepth.NamedType && interfaceFilter?.Invoke(namedTypeSymbol) != false;
+                    break;
 
-                    default:
-                        break;
-                }
+                case IMethodSymbol methodSymbol:
+                    result = depth >= VisitorDepth.Members && methodFilter?.Invoke(methodSymbol) != false;
+                    break;
+
+                case IPropertySymbol propertySymbol:
+                    result = depth >= VisitorDepth.Members && propertyFilter?.Invoke(propertySymbol) != false;
+                    break;
+
+                case IFieldSymbol fieldSymbol:
+                    result = depth >= VisitorDepth.Members && fieldFilter?.Invoke(fieldSymbol) != false;
+                    break;
+
+                case IParameterSymbol parameterSymbol:
+                    result = depth >= VisitorDepth.Parameters && parameterFilter?.Invoke(parameterSymbol) != false;
+                    break;
+
+                case ITypeParameterSymbol typeParameterSymbol:
+                    result = typeParameterFilter(typeParameterSymbol);
+                    break;
             }
 
             return result;
@@ -222,13 +360,10 @@ namespace Blyros
                 case ITypeParameterSymbol _:
                     result = options.GetTypeParameters;
                     break;
-
-                default:
-                    break;
             }
 
-            // The namespaceFilter cannot be used to prevent the visitor to visit because 
-            // some INamespaceSymbol won't match when using the '.' 
+            // The namespaceFilter cannot be used to prevent the visitor to visit because
+            // some INamespaceSymbol won't match when using the '.'
             // Ex: if the match is "Blyros.", the fist INamespaceSymbol will be "Blyros" (because how namespaces works),
             // and it won't match.
             if (result && namespaceFilter != null)
