@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blyros.Runner", "src\Blyros.Runner\Blyros.Runner.csproj", "{4FA6E6E7-AC0F-43BE-9A5C-802E81E98260}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B257C193-D4A5-42D1-944C-F65586752A15}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B257C193-D4A5-42D1-944C-F65586752A15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blyros.Tests", "tests\Blyros.Tests\Blyros.Tests.csproj", "{9819D2D7-3961-4671-8050-75A93E3AF6CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blyros.Tests", "test\Blyros.Tests\Blyros.Tests.csproj", "{9819D2D7-3961-4671-8050-75A93E3AF6CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
