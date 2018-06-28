@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace Blyros.Extensions
+namespace Blyros.Core
 {
     public static class SymbolVisitorExtensions
     {

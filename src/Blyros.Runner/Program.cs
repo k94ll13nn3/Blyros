@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blyros.Extensions;
+using Blyros.Core;
 using Microsoft.CodeAnalysis;
 
 namespace Blyros.Runner

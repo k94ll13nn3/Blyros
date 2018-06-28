@@ -1,4 +1,4 @@
-﻿namespace Blyros
+﻿namespace Blyros.Core
 {
     internal enum VisitorDepth
     {

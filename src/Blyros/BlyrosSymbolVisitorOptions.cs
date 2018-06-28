@@ -1,4 +1,6 @@
-﻿namespace Blyros
+﻿using Blyros.Core;
+
+namespace Blyros
 {
     public class BlyrosSymbolVisitorOptions
     {

@@ -1,4 +1,4 @@
-﻿using Blyros.Extensions;
+﻿using Blyros.Core;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;

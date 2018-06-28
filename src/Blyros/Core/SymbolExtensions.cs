@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 
-namespace Blyros.Extensions
+namespace Blyros.Core
 {
     internal static class SymbolExtensions
     {

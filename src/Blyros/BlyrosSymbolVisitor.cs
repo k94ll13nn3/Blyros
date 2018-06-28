@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Blyros.Extensions;
+using Blyros.Core;
 using Microsoft.CodeAnalysis;
 
 namespace Blyros
